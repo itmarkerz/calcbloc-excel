@@ -6,11 +6,8 @@ export const DEFAULT_BASE_URL = "https://calcbloc.com/api/v1";
 export const KEYS_URL = "https://calcbloc.com/developers/keys";
 /** The keys page as linked from inside the add-in (referral tag, as on the task pane's other calcbloc.com links). */
 export const KEYS_URL_APP = `${KEYS_URL}?utm_source=calcbloc-excel&utm_medium=app&utm_campaign=itmarkerz-oss`;
-
-/** Shown instead of a result while no API key is saved. The add-in makes no request without a key. */
-export const NO_KEY_MESSAGE = `CalcBloc needs a free API key. Get one at ${KEYS_URL_APP}, then paste it in the CalcBloc task pane (Home > CalcBloc > Tax tables > Settings) and save.`;
-
-export const noKeyError = () => new CalcBlocError("setup", "api_key_missing", NO_KEY_MESSAGE);
+/** Where the key goes. */
+export const KEY_SETTINGS_PATH = "Home > CalcBloc > Tax tables > Settings";
 
 const DAY = 24 * 60 * 60 * 1000;
 const MINUTE = 60 * 1000;
@@ -27,19 +24,19 @@ export interface ClientOptions {
   fetch?: (url: string, init?: { headers?: Record<string, string> }) => Promise<Response>;
   store: KeyValueStore;
   baseUrl?: string;
-  /** The free API key. Required: without one every call fails with the set-up message and nothing is fetched. */
   getApiKey?: () => Promise<string | undefined>;
   now?: () => number;
   sleep?: (ms: number) => Promise<void>;
   ttl?: Partial<CacheTtl>;
   /** Most cached responses kept on the device; the oldest are dropped first. */
   maxEntries?: number;
-  /** Requests allowed per rolling minute; defaults to the free key's limit (60). */
-  perMinute?: number;
+  /** Requests allowed per rolling minute; defaults to the API limits (5 anonymous, 60 with a key). */
+  perMinute?: { anonymous: number; keyed: number };
 }
 
-/** What the API told us about the key's daily limit in its last response (X-RateLimit-* headers). */
+/** What the API told us about the daily limit in its last response (X-RateLimit-* headers). */
 export interface QuotaState {
+  keyed: boolean;
   limit: number | null;
   remaining: number | null;
   /** Epoch ms when the daily window resets (UTC midnight). */
@@ -60,8 +57,8 @@ const CACHE_PREFIX = "calcbloc.cache.v1:";
 const INDEX_KEY = "calcbloc.cache.v1.index";
 const QUOTA_KEY = "calcbloc.quota.v1";
 
-/** Requests per rolling minute the API allows with a free key. */
-const PER_MINUTE = 60;
+/** Requests per rolling minute the API allows (anonymous / with a key). */
+const PER_MINUTE = { anonymous: 5, keyed: 60 };
 
 function hoursUntil(ms: number): string {
   const h = Math.max(0, ms) / 3_600_000;
@@ -86,7 +83,7 @@ export class CalcBlocClient {
   private readonly sleep: (ms: number) => Promise<void>;
   private readonly ttl: CacheTtl;
   private readonly maxEntries: number;
-  private readonly perMinute: number;
+  private readonly perMinute: { anonymous: number; keyed: number };
   private readonly mem = new Map<string, CacheEntry>();
   private readonly inflight = new Map<string, Promise<Cached>>();
   private recent: number[] = [];
@@ -125,13 +122,23 @@ export class CalcBlocClient {
     return this.get<CalcResponse>(`/${endpoint}?${qs}`, this.ttl.calc);
   }
 
+  /**
+   * True when requests without a key have hit the API's limit (daily allowance used up, or a 429): the task pane then
+   * asks for a free API key. False once a key is in use.
+   */
+  async needsKeyPrompt(): Promise<boolean> {
+    if ((await this.getApiKey())?.trim()) return false;
+    const q = await this.quotaState();
+    if (!q || q.keyed) return false;
+    const now = this.now();
+    return (q.blockedUntil !== null && now < q.blockedUntil) || (q.remaining !== null && q.remaining <= 0 && (q.resetAt === null || now < q.resetAt));
+  }
+
   async quotaState(): Promise<QuotaState | null> {
     if (this.quota) return this.quota;
     try {
       const raw = await this.store.getItem(QUOTA_KEY);
-      const parsed = raw ? (JSON.parse(raw) as QuotaState & { keyed?: boolean }) : null;
-      // Earlier versions also called without a key; a limit state saved for no-key use does not apply to a key.
-      this.quota = parsed && parsed.keyed !== false ? parsed : null;
+      this.quota = raw ? (JSON.parse(raw) as QuotaState) : null;
     } catch {
       this.quota = null;
     }
@@ -156,14 +163,7 @@ export class CalcBlocClient {
     return keys.length;
   }
 
-  /** True when an API key is saved, i.e. when the client may call the API. */
-  async hasApiKey(): Promise<boolean> {
-    return !!(await this.getApiKey())?.trim();
-  }
-
   private async get<T>(path: string, ttl: number): Promise<T> {
-    // No key, no request: neither the network nor the cache is used until a key is saved.
-    if (!(await this.hasApiKey())) throw noKeyError();
     const v = await this.lookup(path, ttl);
     if (v.ok) return v.data as T;
     throw new CalcBlocError(v.status === 404 || v.code.startsWith("unsupported") ? "unavailable" : "invalid", v.code, v.message);
@@ -204,11 +204,12 @@ export class CalcBlocClient {
   }
 
   private async network(path: string): Promise<Cached> {
-    const apiKey = (await this.getApiKey())?.trim();
-    if (!apiKey) throw noKeyError();
-    await this.checkQuota();
-    await this.pace();
-    const headers: Record<string, string> = { Accept: "application/json", "X-API-Key": apiKey };
+    const apiKey = (await this.getApiKey())?.trim() || undefined;
+    const keyed = !!apiKey;
+    await this.checkQuota(keyed);
+    await this.pace(keyed);
+    const headers: Record<string, string> = { Accept: "application/json" };
+    if (apiKey) headers["X-API-Key"] = apiKey;
     let res: Response;
     this.stats.network++;
     try {
@@ -216,7 +217,7 @@ export class CalcBlocClient {
     } catch (e) {
       throw new CalcBlocError("network", "network_error", `Couldn't reach calcbloc.com (${e instanceof Error ? e.message : String(e)}). Check the connection and recalculate.`);
     }
-    await this.recordQuota(res);
+    await this.recordQuota(res, keyed);
     let body: unknown = null;
     try {
       body = await res.json();
@@ -229,43 +230,42 @@ export class CalcBlocClient {
     const message = err?.message ?? `calcbloc.com answered HTTP ${res.status}.`;
     if (res.status === 429) {
       const retry = Number(res.headers.get("Retry-After"));
-      const q = (await this.quotaState()) ?? this.blankQuota();
+      const q = (await this.quotaState()) ?? this.blankQuota(keyed);
       const until = this.now() + (Number.isFinite(retry) && retry > 0 ? retry * 1000 : MINUTE);
       this.quota = { ...q, blockedUntil: until, updatedAt: this.now() };
       await this.saveQuota();
-      throw this.limitError(until);
+      throw this.limitError(keyed, until);
     }
     if (res.status === 401 || res.status === 403) {
-      throw new CalcBlocError("invalid", code, `The API key was not accepted (${message}). Check it in the CalcBloc task pane, or get a new free key at ${KEYS_URL_APP}.`);
+      throw new CalcBlocError("invalid", code, `The API key was not accepted (${message}). Check it in the CalcBloc task pane (${KEY_SETTINGS_PATH}), get a new free key at ${KEYS_URL_APP}, or remove it to use the free limit without a key.`);
     }
     if (res.status === 400 || res.status === 404) return { ok: false, status: res.status, code, message };
     throw new CalcBlocError("network", code, `calcbloc.com could not answer right now (${message}). Try again later.`);
   }
 
-  private blankQuota(): QuotaState {
-    return { limit: null, remaining: null, resetAt: null, blockedUntil: null, updatedAt: this.now() };
+  private blankQuota(keyed: boolean): QuotaState {
+    return { keyed, limit: null, remaining: null, resetAt: null, blockedUntil: null, updatedAt: this.now() };
   }
 
-  private limitError(until: number): CalcBlocError {
+  private limitError(keyed: boolean, until: number): CalcBlocError {
     const wait = hoursUntil(until - this.now());
-    return new CalcBlocError(
-      "limited",
-      "rate_limited",
-      `The request limit for this API key (5,000 a day, 60 a minute) is used up; it resets in ${wait}. Results already fetched keep working.`,
-    );
+    const msg = keyed
+      ? `The request limit for this API key (5,000 a day, 60 a minute) is used up; it resets in ${wait}. Results already fetched keep working.`
+      : `Add your free API key: the free requests without a key (50 a day, 5 a minute, per internet address) are used up; they reset in ${wait}. Get a free key (5,000 a day) at ${KEYS_URL_APP} and paste it in the CalcBloc task pane (${KEY_SETTINGS_PATH}). Results already fetched keep working.`;
+    return new CalcBlocError("limited", "rate_limited", msg);
   }
 
-  private async checkQuota(): Promise<void> {
+  private async checkQuota(keyed: boolean): Promise<void> {
     const q = await this.quotaState();
     if (!q) return;
     const now = this.now();
-    if (q.blockedUntil && now < q.blockedUntil) throw this.limitError(q.blockedUntil);
-    if (q.remaining !== null && q.remaining <= 0 && q.resetAt && now < q.resetAt) throw this.limitError(q.resetAt);
+    if (q.blockedUntil && now < q.blockedUntil && q.keyed === keyed) throw this.limitError(keyed, q.blockedUntil);
+    if (q.keyed === keyed && q.remaining !== null && q.remaining <= 0 && q.resetAt && now < q.resetAt) throw this.limitError(keyed, q.resetAt);
   }
 
   /** Waits so that no more requests leave per rolling minute than the API accepts. */
-  private async pace(): Promise<void> {
-    const limit = this.perMinute;
+  private async pace(keyed: boolean): Promise<void> {
+    const limit = keyed ? this.perMinute.keyed : this.perMinute.anonymous;
     for (;;) {
       const now = this.now();
       this.recent = this.recent.filter((t) => now - t < MINUTE);
@@ -277,7 +277,7 @@ export class CalcBlocClient {
     }
   }
 
-  private async recordQuota(res: Response): Promise<void> {
+  private async recordQuota(res: Response, keyed: boolean): Promise<void> {
     const num = (h: string) => {
       const v = res.headers.get(h);
       if (v === null || v.trim() === "") return null;
@@ -290,10 +290,11 @@ export class CalcBlocClient {
     if (limit === null && remaining === null) return;
     const prev = await this.quotaState();
     this.quota = {
+      keyed,
       limit,
       remaining,
       resetAt: reset !== null ? this.now() + reset * 1000 : null,
-      blockedUntil: prev ? prev.blockedUntil : null,
+      blockedUntil: prev && prev.keyed === keyed ? prev.blockedUntil : null,
       updatedAt: this.now(),
     };
     await this.saveQuota();

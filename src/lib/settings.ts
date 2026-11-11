@@ -2,7 +2,7 @@ import type { KeyValueStore } from "./storage";
 
 /** What the task pane saves. Kept on this device only (OfficeRuntime.storage), never in the workbook. */
 export interface Settings {
-  /** Free CalcBloc API key (https://calcbloc.com/developers/keys). Required: without one the add-in makes no requests. */
+  /** Free CalcBloc API key (https://calcbloc.com/developers/keys). Optional: without one the API's free limit applies (50 requests a day per internet address); the task pane asks for a key when that runs out. */
   apiKey?: string;
   /** Country used when a function's country argument is empty. */
   defaultCountry?: string;

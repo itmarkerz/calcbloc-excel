@@ -192,12 +192,12 @@ footer {
   color: var(--ink-muted);
 }
 
-/* First-run notice: shown while no API key is saved. */
-.card.setup {
+/* "Add your free API key": shown when the free requests without a key are used up. */
+.card.key-prompt {
   border-color: var(--cobalt);
   border-width: 2px;
 }
-.card.setup ol {
+.card.key-prompt ol {
   margin: 8px 0 0;
   padding-left: 20px;
 }

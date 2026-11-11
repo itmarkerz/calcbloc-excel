@@ -14,7 +14,7 @@ Results are estimates for planning, budgeting and comparison. They are not tax, 
 
 ## Fair use and limits
 
-The add-in requires a free CalcBloc API key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) and makes no requests without one. Use it within that key's limits (5,000 requests a day and 60 a minute; current limits at [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss#limits)). Don't try to get around the limits, resell the API through the add-in, or use it to overload the service. Keep your API key private; you are responsible for requests made with it.
+Use the add-in within the CalcBloc API limits: without a key, 50 requests a day and 5 a minute per internet address (when they run out the add-in asks you to add a free key); with a free key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss), the limits shown at [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss#limits). Don't try to get around the limits, resell the API through the add-in, or use it to overload the service. Keep your API key private; you are responsible for requests made with it.
 
 ## Attribution
 

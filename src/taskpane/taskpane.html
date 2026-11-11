@@ -19,15 +19,14 @@
     </header>
 
     <main>
-      <section id="setup" class="card setup" aria-labelledby="setup-h" hidden>
-        <h2 id="setup-h">Add your free API key</h2>
-        <p>
-          CalcBloc functions and tax tables need a free API key. Until one is saved, the add-in sends nothing to calcbloc.com.
-        </p>
+      <section id="key-prompt" class="card key-prompt" aria-labelledby="key-prompt-h" role="alert" hidden>
+        <h2 id="key-prompt-h">Add your free API key</h2>
+        <p>The free requests without a key (50 a day per internet address) are used up for today. A free CalcBloc key gives 5,000 a day.</p>
         <ol>
           <li>
-            Get a key (free, 5,000 requests a day):
+            Get a key:
             <a href="https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&amp;utm_medium=app&amp;utm_campaign=itmarkerz-oss" target="_blank" rel="noopener">calcbloc.com/developers/keys</a>
+            (sign up with your email; the key is shown straight away).
           </li>
           <li>Paste it in <strong>API key</strong> under Settings below and click <strong>Save settings</strong>.</li>
         </ol>
@@ -54,15 +53,15 @@
 
       <section class="card" aria-labelledby="settings-h">
         <h2 id="settings-h">Settings</h2>
-        <label for="set-key">API key <span class="muted">(required)</span></label>
+        <label for="set-key">API key <span class="muted">(optional)</span></label>
         <div class="key">
           <input id="set-key" type="password" autocomplete="off" spellcheck="false" placeholder="cb_…" />
           <button id="set-key-show" type="button" class="ghost" aria-pressed="false">Show</button>
         </div>
         <p class="hint">
-          A free key gives 5,000 requests a day and 60 a minute:
+          Without a key: 50 requests a day and 5 a minute per internet address; when they run out, this pane asks for a key. A free key gives 5,000 a day:
           <a href="https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&amp;utm_medium=app&amp;utm_campaign=itmarkerz-oss" target="_blank" rel="noopener">calcbloc.com/developers/keys</a>.
-          Without a key the add-in makes no requests. Stored on this device only, never in the workbook.
+          Stored on this device only, never in the workbook.
         </p>
         <div class="row">
           <div>

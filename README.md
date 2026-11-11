@@ -4,8 +4,6 @@ An Office add-in for Excel that adds four worksheet functions for take-home pay,
 
 CalcBloc is a product of [itmarkerz technologies](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 
-**Needs a free API key.** Get one at [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss) and paste it in the task pane (**Home > CalcBloc > Tax tables > Settings**). Until a key is saved the add-in makes no requests: the task pane opens with a set-up card and formulas return `#N/A` with the same instructions in the error tooltip.
-
 ```
 =CALCBLOC.NET("uk", 50000)                    annual take-home pay
 =CALCBLOC.TAX("poland", 120000)               income tax (official brackets)
@@ -113,19 +111,19 @@ The current list with every parameter is on [calcbloc.com/developers](https://ca
 Open it from **Home > CalcBloc > Tax tables**.
 
 - **Insert tax table**: pick a country, tax year and (optionally) a region. The add-in adds a new worksheet with every income tax band, threshold, employee and employer rate: section, label, from/to, rate, value, basis, notes, effective dates, status, the official source title and a hyperlink to the source, and the date it was retrieved. The sheet starts and ends with the credit "Data by CalcBloc (calcbloc.com/data)" and links to the matching calcbloc.com page, for example [calcbloc.com/uk/tax-tables/2026-27](https://calcbloc.com/uk/tax-tables/2026-27?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
-- **Settings**: your free API key (required; the task pane shows a set-up card until one is saved), and a default country and region for formulas that leave them empty.
+- **Settings**: an optional free API key, and a default country and region for formulas that leave them empty. When the free requests without a key run out, an **Add your free API key** card appears at the top of the pane with the keys link and these steps.
 - **Requests and cache**: how many requests are left today (from the API's own counters) and a button to clear cached answers.
 
 ## Requests, limits and caching
 
-The add-in needs a free API key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss), which allows **5,000 requests a day and 60 a minute**. Without a key it calls nothing (not even its own cache) and every function returns the set-up message. (Shared office and school networks would use up the API's small per-address allowance for keyless use, so the add-in does not rely on it.) With a key, the add-in is built to use as few requests as possible:
+Without an API key the CalcBloc API allows **50 requests a day and 5 a minute per internet address**. A free key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss) raises that to 5,000 a day and 60 a minute. The add-in is built to stay well inside the anonymous limit:
 
 - every answer is kept in memory and on the device (`OfficeRuntime.storage`) for 7 days, so reopening or recalculating a workbook doesn't repeat requests;
 - identical requests made at the same time (a column of formulas) share one network call, and NET and TAX on the same inputs share one calculation;
 - RATE, the TAX bracket estimate and Insert tax table fetch a whole table once and answer every formula on it from that copy;
 - answers such as "unsupported country" are cached for a day, so a column of bad inputs costs one request;
 - requests are paced to the per-minute limit instead of failing (cells show `#BUSY!` while they wait);
-- once the API reports that the key's daily limit is used up (or answers 429), no more calls are made until it resets; the cell explains this.
+- once the API reports that the daily limit is used up (`X-RateLimit-Remaining: 0` or a 429), no more calls are made until it resets. Without a key the cell's message starts with "Add your free API key" and gives the keys link and where to paste the key (Home > CalcBloc > Tax tables > Settings), and the task pane shows the same prompt; with a key it says the key's limit is used up.
 
 The key is sent in the `X-API-Key` header over HTTPS. **Clear cached data** in the task pane forces fresh answers.
 
@@ -141,7 +139,7 @@ npm run certs        # installs a trusted localhost certificate (office-addin-de
 npm run dev-server   # serves the add-in on https://localhost:3104
 ```
 
-**Local harness, no Excel needed**: run `npm run dev-server`, then open [https://localhost:3104/harness.html?fixtures=1](https://localhost:3104/harness.html?fixtures=1). It runs the real function code outside Excel: formulas evaluate as they would in cells (errors shown with their tooltip text), and the "Insert tax table" output is previewed as a worksheet. The task pane itself opens at [https://localhost:3104/taskpane.html?fixtures=1](https://localhost:3104/taskpane.html?fixtures=1) (Office.js does not run inside a frame outside Office). `?fixtures=1` answers from recorded API responses and the dataset files in `test/fixtures`, with no requests to calcbloc.com, and starts with a placeholder API key (add `&nokey=1` to see the first-run set-up card); drop `?fixtures=1` to use the live API, which needs your own free key saved in the task pane. The harness and fixtures exist only in development builds. For a quick look without installing the certificate, `CALCBLOC_SELF_SIGNED=1 npm run dev-server` uses a throwaway self-signed certificate (accept the browser warning); Excel itself needs `npm run certs`.
+**Local harness, no Excel needed**: run `npm run dev-server`, then open [https://localhost:3104/harness.html?fixtures=1](https://localhost:3104/harness.html?fixtures=1). It runs the real function code outside Excel: formulas evaluate as they would in cells (errors shown with their tooltip text), and the "Insert tax table" output is previewed as a worksheet. The task pane itself opens at [https://localhost:3104/taskpane.html?fixtures=1](https://localhost:3104/taskpane.html?fixtures=1) (Office.js does not run inside a frame outside Office). `?fixtures=1` answers from recorded API responses and the dataset files in `test/fixtures`, with no requests to calcbloc.com; drop it to use the live API. The harness and fixtures exist only in development builds. For a quick look without installing the certificate, `CALCBLOC_SELF_SIGNED=1 npm run dev-server` uses a throwaway self-signed certificate (accept the browser warning); Excel itself needs `npm run certs`.
 
 **Excel on the web** (sideload):
 
@@ -159,7 +157,8 @@ Other commands:
 npm test              # unit tests (vitest, mocked fetch, no network)
 npm run typecheck     # TypeScript
 npm run validate      # office-addin-manifest validate manifest.xml (Microsoft's validation service)
-npm run build         # production build in dist/ (manifest URLs rewritten to CALCBLOC_ADDIN_URL)
+npm run build         # production build in dist/ for https://addins.calcbloc.com/excel/ (CALCBLOC_ADDIN_URL overrides)
+npm run validate:prod # validates dist/manifest.xml
 ```
 
 ## How it is built
@@ -182,11 +181,11 @@ test/                      unit tests and fixtures
 appsource/listing.md       draft Marketplace listing
 ```
 
-**Production hosting** is not set up: the add-in's web files (`dist/` after `npm run build`) need an HTTPS host, for example a static path on calcbloc.com or GitHub Pages. Which host to use is the owner's decision; build with `CALCBLOC_ADDIN_URL=https://<host>/<path>/ npm run build` and validate `dist/manifest.xml`.
+**Production hosting**: the add-in's web files are served from **https://addins.calcbloc.com/excel/** (decided 11 November 2026; hosted on the itmarkerz-first server). `npm run build` writes `dist/` with every manifest URL pointing there (the same as `CALCBLOC_ADDIN_URL=https://addins.calcbloc.com/excel/ npm run build`); upload the contents of `dist/` to that path and check it with `npm run validate:prod`. Set `CALCBLOC_ADDIN_URL` only to build for another host.
 
 ## Privacy
 
-The add-in sends only the inputs of each formula or table request (country, region, year, salary amount, section) to the CalcBloc API at calcbloc.com, plus your API key. It has no analytics or tracking, reads no other cells, and stores its settings and cached answers only on your device. Details: [PRIVACY.md](PRIVACY.md). Terms: [TERMS.md](TERMS.md).
+The add-in sends only the inputs of each formula or table request (country, region, year, salary amount, section) to the CalcBloc API at calcbloc.com, plus your API key if you set one. It has no analytics or tracking, reads no other cells, and stores its settings and cached answers only on your device. Details: [PRIVACY.md](PRIVACY.md). Terms: [TERMS.md](TERMS.md).
 
 Figures are estimates for planning and comparison, not tax, legal or financial advice. Check important figures against the official source linked next to each one.
 

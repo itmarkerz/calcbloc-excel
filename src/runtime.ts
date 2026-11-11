@@ -4,7 +4,7 @@
  */
 import { CalcBlocClient } from "./lib/client";
 import type { Deps } from "./lib/core";
-import { SETTINGS_KEY, SettingsStore } from "./lib/settings";
+import { SettingsStore } from "./lib/settings";
 import { defaultStore, memoryStore } from "./lib/storage";
 
 declare const __DEV__: boolean;
@@ -21,25 +21,16 @@ export function fixtureMode(): boolean {
   }
 }
 
-function demoKeyAllowed(): boolean {
-  try {
-    return new URLSearchParams(location.search).get("nokey") !== "1";
-  } catch {
-    return true;
-  }
-}
-
 export function getDeps(): Deps & { settingsStore: SettingsStore } {
   if (deps) return deps;
   const fixtures = fixtureMode();
-  // The add-in needs an API key; the offline demo starts with a placeholder one (add &nokey=1 to see the set-up prompt).
-  const store = fixtures ? memoryStore(demoKeyAllowed() ? { [SETTINGS_KEY]: JSON.stringify({ apiKey: `cb_${"0".repeat(32)}` }) } : {}) : defaultStore();
+  const store = fixtures ? memoryStore() : defaultStore();
   const settingsStore = new SettingsStore(store);
   const client = new CalcBlocClient({
     store,
     getApiKey: async () => (await settingsStore.get()).apiKey,
     // The offline demo answers locally, so pacing to the API's per-minute limit is not needed there.
-    ...(fixtures ? { perMinute: 1000 } : {}),
+    ...(fixtures ? { perMinute: { anonymous: 1000, keyed: 1000 } } : {}),
     fetch:
       __DEV__ && fixtures
         ? (url) => import("./harness/fixture-fetch").then((m) => m.fixtureFetch(url))

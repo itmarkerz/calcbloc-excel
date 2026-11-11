@@ -1,9 +1,8 @@
 /**
  * Errors raised by the add-in logic. The custom-function layer turns them into Excel errors:
  * `invalid` → #VALUE!, everything else → #N/A, each with the message shown in the cell's error tooltip.
- * `setup` means no API key is saved yet: the message says where to get one and where to paste it.
  */
-export type ErrorKind = "invalid" | "unavailable" | "limited" | "network" | "setup";
+export type ErrorKind = "invalid" | "unavailable" | "limited" | "network";
 
 export class CalcBlocError extends Error {
   readonly kind: ErrorKind;

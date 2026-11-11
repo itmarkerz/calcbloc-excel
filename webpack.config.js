@@ -9,9 +9,10 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const port = Number(process.env.npm_package_config_dev_server_port || 3104);
 const urlDev = `https://localhost:${port}/`;
-// Production host for the add-in's web files. Not decided yet (owner decision, see PUBLISHING_CHECKLIST.md);
-// set CALCBLOC_ADDIN_URL when building for release, e.g. CALCBLOC_ADDIN_URL=https://example.com/excel/ npm run build
-const urlProd = (process.env.CALCBLOC_ADDIN_URL || "https://example.com/calcbloc-excel/").replace(/\/?$/, "/");
+// Production host for the add-in's web files: https://addins.calcbloc.com/excel/ (decided 11 November 2026).
+// CALCBLOC_ADDIN_URL overrides it, e.g. for a staging copy: CALCBLOC_ADDIN_URL=https://staging.example/excel/ npm run build
+const PROD_URL = "https://addins.calcbloc.com/excel/";
+const urlProd = (process.env.CALCBLOC_ADDIN_URL || PROD_URL).replace(/\/?$/, "/");
 
 async function httpsOptions() {
   const o = await devCerts.getHttpsServerOptions();
@@ -20,9 +21,7 @@ async function httpsOptions() {
 
 module.exports = async (env, options) => {
   const dev = options.mode === "development";
-  if (!dev && !process.env.CALCBLOC_ADDIN_URL) {
-    console.warn(`CALCBLOC_ADDIN_URL is not set: dist/manifest.xml points at the placeholder ${urlProd}`);
-  }
+  if (!dev && urlProd !== PROD_URL) console.warn(`CALCBLOC_ADDIN_URL is set: dist/manifest.xml points at ${urlProd}, not ${PROD_URL}`);
   const entry = {
     // Shared runtime: the task pane page loads the custom functions too, so both use one module instance.
     taskpane: ["./src/functions/functions.ts", "./src/taskpane/taskpane.ts"],

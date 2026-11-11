@@ -3,8 +3,7 @@ import * as core from "../src/lib/core";
 import { CalcBlocError } from "../src/lib/errors";
 import { annualTaxFromSection } from "../src/lib/tables";
 import type { CalcResponse } from "../src/lib/types";
-import { NO_KEY_MESSAGE } from "../src/lib/client";
-import { fixtureFetch, jsonResponse, loadFixture, makeDeps, TEST_KEY } from "./helpers";
+import { fixtureFetch, jsonResponse, loadFixture, makeDeps } from "./helpers";
 
 const usNet = () => loadFixture<CalcResponse>("calc/net-salary_country-us_region-ca_salary-60000.json")!;
 
@@ -43,13 +42,13 @@ describe("CALCBLOC.NET", () => {
   });
 
   it("uses the default country and region from settings when the arguments are empty", async () => {
-    const { deps } = makeDeps({ settings: { apiKey: TEST_KEY, defaultCountry: "us", defaultRegion: "ca" } });
+    const { deps } = makeDeps({ settings: { defaultCountry: "us", defaultRegion: "ca" } });
     expect(await core.net(deps, "", 60000)).toBe(47806.56);
     expect(await core.net(deps, null, 60000, undefined)).toBe(47806.56);
   });
 
   it("does not apply the default region to another country", async () => {
-    const { deps } = makeDeps({ settings: { apiKey: TEST_KEY, defaultCountry: "canada", defaultRegion: "on" } });
+    const { deps } = makeDeps({ settings: { defaultCountry: "canada", defaultRegion: "on" } });
     await expect(core.net(deps, "us", 60000)).rejects.toMatchObject({ kind: "invalid", code: "missing_region" });
   });
 
@@ -204,32 +203,5 @@ describe("CALCBLOC.EMPLOYER_COST", () => {
   it("France has take-home pay but no employer-cost calculation yet", async () => {
     const { deps } = makeDeps();
     await expect(core.employerCost(deps, "france", 50000)).rejects.toThrow(/no employer cost calculation for France/);
-  });
-});
-
-describe("without an API key", () => {
-  it("every function explains how to add a free key and no request is made", async () => {
-    const { deps, fetch } = makeDeps({ settings: { defaultCountry: "uk" } });
-    const calls = [
-      () => core.net(deps, "uk", 50000),
-      () => core.tax(deps, "uk", 50000),
-      () => core.tax(deps, "poland", 120000),
-      () => core.rate(deps, "ireland", "usc", 4),
-      () => core.employerCost(deps, "germany", 60000),
-    ];
-    for (const call of calls) {
-      const err = await call().catch((e) => e);
-      expect(err).toBeInstanceOf(CalcBlocError);
-      expect(err).toMatchObject({ kind: "setup", code: "api_key_missing", message: NO_KEY_MESSAGE });
-    }
-    expect(fetch.calls).toHaveLength(0);
-  });
-
-  it("works as soon as a key is saved", async () => {
-    const { deps, fetch, setSettings } = makeDeps({ settings: {} });
-    await expect(core.net(deps, "us", 60000, "ca")).rejects.toMatchObject({ kind: "setup" });
-    setSettings({ apiKey: TEST_KEY });
-    expect(await core.net(deps, "us", 60000, "ca")).toBe(47806.56);
-    expect(fetch.calls.every((c) => c.headers["X-API-Key"] === TEST_KEY)).toBe(true);
   });
 });
