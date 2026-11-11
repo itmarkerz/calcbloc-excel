@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CalcBloc Excel harness</title>
+    <style>
+      :root {
+        --paper: #f4f2ea;
+        --surface: #fff;
+        --ink: #111114;
+        --muted: #5b5b66;
+        --line: #d9d7cf;
+        --grid: #e1dfd8;
+        --cobalt: #1f4fe0;
+        --err: #b42318;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+      header { padding: 16px 20px 8px; }
+      h1 { margin: 0; font-size: 20px; }
+      h2 { font-size: 15px; margin: 0 0 8px; }
+      .muted { color: var(--muted); }
+      .mode { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #e6ecfc; color: var(--cobalt); }
+      .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; padding: 8px 20px 20px; }
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow: auto; }
+      table.xl { border-collapse: collapse; font: 13px/1.3 Calibri, "Segoe UI", sans-serif; width: 100%; }
+      table.xl th, table.xl td { border: 1px solid var(--grid); padding: 3px 6px; text-align: left; vertical-align: top; }
+      table.xl th { background: #f3f3f3; font-weight: 600; color: #444; }
+      table.xl td.num { text-align: right; font-variant-numeric: tabular-nums; }
+      td.rowhead { background: #f3f3f3; color: #666; text-align: center; width: 32px; }
+      td.formula { font-family: Consolas, monospace; font-size: 12px; }
+      td.err { color: var(--err); font-weight: 600; text-align: center; }
+      .errmsg { display: block; font-weight: 400; font-size: 11px; color: var(--muted); text-align: left; }
+      .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+      .controls input { flex: 1; min-width: 260px; padding: 6px 8px; font-family: Consolas, monospace; }
+      button, select { font: inherit; padding: 6px 10px; }
+      .sheet td { white-space: nowrap; max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+      .sheet tr.hdr td { font-weight: 700; background: #e6ecfc; }
+      .sheet tr.title td:first-child { font-weight: 700; font-size: 15px; }
+      .sheet tr.credit td:first-child { font-style: italic; }
+      a { color: var(--cobalt); }
+      @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>CalcBloc for Excel: local review harness <span id="mode" class="mode"></span></h1>
+      <p class="muted">
+        Runs the add-in's real function code outside Excel. Custom functions evaluate here exactly as in a cell
+        (errors show as Excel would, with the tooltip message underneath). Development build only.
+      </p>
+    </header>
+    <div class="wrap">
+      <div>
+        <section class="card">
+          <h2>Worksheet: custom functions</h2>
+          <div class="controls">
+            <input id="formula" value='=CALCBLOC.RATE("uk", "personal-allowance", "Personal Allowance")' aria-label="Formula" />
+            <button id="add">Add formula</button>
+          </div>
+          <table class="xl" id="grid">
+            <thead><tr><th></th><th>A: formula</th><th>B: result</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="muted" id="stats"></p>
+        </section>
+        <section class="card" style="margin-top: 16px">
+          <h2>Preview: "Insert tax table" output</h2>
+          <div class="controls">
+            <select id="sheet-country"></select>
+            <button id="sheet-go">Build sheet</button>
+          </div>
+          <div id="sheet"></div>
+        </section>
+      </div>
+      <div>
+        <h2>Task pane</h2>
+        <div class="card">
+          <p>Office.js refuses to run inside a frame outside Office, so the task pane opens in its own tab.</p>
+          <p><a id="pane" href="taskpane.html" target="_blank" rel="noopener">Open the task pane preview</a></p>
+          <p class="muted">Outside Excel, "Insert tax table" fetches the table and reports its size instead of writing a sheet; the preview on the left shows what it writes.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

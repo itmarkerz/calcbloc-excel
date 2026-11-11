@@ -1,0 +1,193 @@
+:root {
+  --paper: #f4f2ea;
+  --surface: #ffffff;
+  --ink: #111114;
+  --ink-muted: #5b5b66;
+  --line: rgb(17 17 20 / 0.12);
+  --cobalt: #1f4fe0;
+  --cobalt-deep: #1238b8;
+  --on-cobalt: #ffffff;
+  --ok: #17663a;
+  --error: #b42318;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0f1020;
+    --surface: #161731;
+    --ink: #f4f2ea;
+    --ink-muted: #a6a6b5;
+    --line: rgb(244 242 234 / 0.14);
+    --cobalt: #6d8dff;
+    --cobalt-deep: #8fa8ff;
+    --on-cobalt: #0f1020;
+    --ok: #6fd39a;
+    --error: #ff8a80;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 14px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+.top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 16px 10px;
+}
+.top img {
+  border-radius: 6px;
+}
+h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+}
+h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 650;
+}
+p {
+  margin: 0 0 10px;
+}
+.muted {
+  color: var(--ink-muted);
+  margin: 0;
+}
+.top .muted {
+  font-size: 12px;
+}
+
+main {
+  padding: 0 12px 8px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.card > .muted {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 8px 0 4px;
+}
+select,
+input {
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+select:focus,
+input:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 1px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.key {
+  display: flex;
+  gap: 6px;
+}
+.key input {
+  flex: 1;
+  font-family: Consolas, ui-monospace, monospace;
+  font-size: 12px;
+}
+
+button {
+  font: inherit;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+button.primary {
+  margin-top: 12px;
+  background: var(--cobalt);
+  border-color: var(--cobalt);
+  color: var(--on-cobalt);
+  font-weight: 600;
+}
+button.primary:hover:not(:disabled) {
+  background: var(--cobalt-deep);
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.ghost:hover:not(:disabled) {
+  border-color: var(--cobalt);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin: 6px 0 0;
+}
+.status {
+  font-size: 12px;
+  margin: 8px 0 0;
+  min-height: 1em;
+}
+.status.ok {
+  color: var(--ok);
+}
+.status.error {
+  color: var(--error);
+}
+
+a {
+  color: var(--cobalt);
+}
+code {
+  font-family: Consolas, ui-monospace, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.fns {
+  margin: 0;
+}
+.fns dt {
+  margin-top: 8px;
+}
+.fns dd {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+footer {
+  padding: 4px 16px 16px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
