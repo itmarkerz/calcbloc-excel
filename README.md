@@ -1,8 +1,8 @@
 # CalcBloc for Microsoft Excel: tax tables and take-home pay functions
 
-An Office add-in for Excel that adds four worksheet functions for take-home pay, income tax, employer cost and official tax rates, plus a task pane that inserts a full 2026 tax table with the official source of every figure. It uses the [CalcBloc API](https://calcbloc.com/developers) and the same sourced data as [calcbloc.com](https://calcbloc.com).
+An Office add-in for Excel that adds four worksheet functions for take-home pay, income tax, employer cost and official tax rates, plus a task pane that inserts a full 2026 tax table with the official source of every figure. It uses the [CalcBloc API](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss) and the same sourced data as [calcbloc.com](https://calcbloc.com/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 
-CalcBloc is a product of [itmarkerz technologies](https://itmarkerz.co.in).
+CalcBloc is a product of [itmarkerz technologies](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 
 ```
 =CALCBLOC.NET("uk", 50000)                    annual take-home pay
@@ -104,19 +104,19 @@ The add-in reads the list of countries, regions, years and parameters from the A
 - **NET, TAX and EMPLOYER_COST**: United States (by state), United Kingdom (England, Scotland, Wales), Canada (by province), Australia, New Zealand, Ireland, India, Germany, Spain, Netherlands, Singapore; France for NET and TAX.
 - **Tax tables only** (RATE, TAX bracket estimate, Insert tax table): Austria, Czechia, Denmark, Finland, Italy, Luxembourg, Norway, Poland, Portugal, Sweden, Switzerland, United Arab Emirates.
 
-The current list with every parameter is on [calcbloc.com/developers](https://calcbloc.com/developers#parameters); tax tables for each country are linked from [calcbloc.com/data](https://calcbloc.com/data).
+The current list with every parameter is on [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss#parameters); tax tables for each country are linked from [calcbloc.com/data](https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 
 ## Task pane
 
 Open it from **Home > CalcBloc > Tax tables**.
 
-- **Insert tax table**: pick a country, tax year and (optionally) a region. The add-in adds a new worksheet with every income tax band, threshold, employee and employer rate: section, label, from/to, rate, value, basis, notes, effective dates, status, the official source title and a hyperlink to the source, and the date it was retrieved. The sheet starts and ends with the credit "Data by CalcBloc (calcbloc.com/data)" and links to the matching calcbloc.com page, for example [calcbloc.com/uk/tax-tables/2026-27](https://calcbloc.com/uk/tax-tables/2026-27).
+- **Insert tax table**: pick a country, tax year and (optionally) a region. The add-in adds a new worksheet with every income tax band, threshold, employee and employer rate: section, label, from/to, rate, value, basis, notes, effective dates, status, the official source title and a hyperlink to the source, and the date it was retrieved. The sheet starts and ends with the credit "Data by CalcBloc (calcbloc.com/data)" and links to the matching calcbloc.com page, for example [calcbloc.com/uk/tax-tables/2026-27](https://calcbloc.com/uk/tax-tables/2026-27?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 - **Settings**: an optional free API key, and a default country and region for formulas that leave them empty.
 - **Requests and cache**: how many requests are left today (from the API's own counters) and a button to clear cached answers.
 
 ## Requests, limits and caching
 
-Without an API key the CalcBloc API allows **50 requests a day and 5 a minute per internet address**. A free key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys) raises that to 5,000 a day and 60 a minute. The add-in is built to stay well inside the anonymous limit:
+Without an API key the CalcBloc API allows **50 requests a day and 5 a minute per internet address**. A free key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss) raises that to 5,000 a day and 60 a minute. The add-in is built to stay well inside the anonymous limit:
 
 - every answer is kept in memory and on the device (`OfficeRuntime.storage`) for 7 days, so reopening or recalculating a workbook doesn't repeat requests;
 - identical requests made at the same time (a column of formulas) share one network call, and NET and TAX on the same inputs share one calculation;
@@ -190,20 +190,20 @@ Figures are estimates for planning and comparison, not tax, legal or financial a
 
 ## Data and licence
 
-Tax data comes from [CalcBloc](https://calcbloc.com/data): every figure is taken from the official government source named next to it, with the date it was last checked. Data licence: CC BY 4.0, credit "Data by CalcBloc (calcbloc.com/data)". Wherever you show results from this add-in, keep that credit. The tables and recorded responses in `test/fixtures` are CalcBloc data under the same licence.
+Tax data comes from [CalcBloc](https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss): every figure is taken from the official government source named next to it, with the date it was last checked. Data licence: CC BY 4.0, credit "Data by CalcBloc (calcbloc.com/data)". Wherever you show results from this add-in, keep that credit. The tables and recorded responses in `test/fixtures` are CalcBloc data under the same licence.
 
 Code licence: MIT, see [LICENSE](LICENSE).
 
 ## Links
 
-- Website: [calcbloc.com](https://calcbloc.com)
-- Tax tables and downloads: [calcbloc.com/data](https://calcbloc.com/data)
-- API documentation and free keys: [calcbloc.com/developers](https://calcbloc.com/developers)
-- Support: [calcbloc.com/contact](https://calcbloc.com/contact)
+- Website: [calcbloc.com](https://calcbloc.com/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss)
+- Tax tables and downloads: [calcbloc.com/data](https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss)
+- API documentation and free keys: [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss)
+- Support: [calcbloc.com/contact](https://calcbloc.com/contact?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss)
 
 ## About
 
-CalcBloc is built and published by [itmarkerz technologies](https://itmarkerz.co.in), a web and mobile app development company in Kerala, India.
+CalcBloc is built and published by [itmarkerz technologies](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss), a web and mobile app development company in Kerala, India.
 
-- itmarkerz technologies: [itmarkerz.co.in](https://itmarkerz.co.in)
-- CalcBloc: [calcbloc.com](https://calcbloc.com), [calcbloc.com/data](https://calcbloc.com/data), [calcbloc.com/developers](https://calcbloc.com/developers)
+- itmarkerz technologies: [itmarkerz.co.in](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss)
+- CalcBloc: [calcbloc.com](https://calcbloc.com/?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss), [calcbloc.com/data](https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss), [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss)

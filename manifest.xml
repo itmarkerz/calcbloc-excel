@@ -93,7 +93,7 @@
       <bt:Urls>
         <bt:Url id="Functions.Script.Url" DefaultValue="https://localhost:3104/functions.js"/>
         <bt:Url id="Functions.Metadata.Url" DefaultValue="https://localhost:3104/functions.json"/>
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://calcbloc.com/developers"/>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://calcbloc.com/developers?utm_source=calcbloc-excel&amp;utm_medium=app&amp;utm_campaign=itmarkerz-oss"/>
         <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3104/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>

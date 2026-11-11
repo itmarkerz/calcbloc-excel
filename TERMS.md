@@ -2,7 +2,7 @@
 
 *Draft for review. Last updated: 11 November 2026.*
 
-These terms apply to the CalcBloc add-in for Microsoft Excel (the "add-in"), published by [itmarkerz technologies](https://itmarkerz.co.in) ("we"). CalcBloc is a product of itmarkerz technologies. By installing or using it you agree to them. The CalcBloc API that the add-in calls is also covered by the [CalcBloc API terms](https://calcbloc.com/developers/terms), and the website by the [website terms](https://calcbloc.com/terms).
+These terms apply to the CalcBloc add-in for Microsoft Excel (the "add-in"), published by [itmarkerz technologies](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) ("we"). CalcBloc is a product of itmarkerz technologies. By installing or using it you agree to them. The CalcBloc API that the add-in calls is also covered by the [CalcBloc API terms](https://calcbloc.com/developers/terms?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss), and the website by the [website terms](https://calcbloc.com/terms?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss).
 
 ## The service
 
@@ -14,7 +14,7 @@ Results are estimates for planning, budgeting and comparison. They are not tax, 
 
 ## Fair use and limits
 
-Use the add-in within the CalcBloc API limits: without a key, 50 requests a day and 5 a minute per internet address; with a free key, the limits shown at [calcbloc.com/developers](https://calcbloc.com/developers#limits). Don't try to get around the limits, resell the API through the add-in, or use it to overload the service. Keep your API key private; you are responsible for requests made with it.
+Use the add-in within the CalcBloc API limits: without a key, 50 requests a day and 5 a minute per internet address; with a free key, the limits shown at [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss#limits). Don't try to get around the limits, resell the API through the add-in, or use it to overload the service. Keep your API key private; you are responsible for requests made with it.
 
 ## Attribution
 
@@ -30,4 +30,4 @@ The add-in's source code is available under the MIT licence (see [LICENSE](LICEN
 
 ## Contact
 
-[calcbloc.com/contact](https://calcbloc.com/contact)
+[calcbloc.com/contact](https://calcbloc.com/contact?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss)

@@ -2,7 +2,7 @@
 
 *Draft for review. Last updated: 11 November 2026.*
 
-This policy covers the CalcBloc add-in for Microsoft Excel (the "add-in"), published by [itmarkerz technologies](https://itmarkerz.co.in) ("we"). CalcBloc is a product of itmarkerz technologies. The CalcBloc website has its own policy at [calcbloc.com/privacy](https://calcbloc.com/privacy), and the CalcBloc API is covered by the [API terms](https://calcbloc.com/developers/terms).
+This policy covers the CalcBloc add-in for Microsoft Excel (the "add-in"), published by [itmarkerz technologies](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) ("we"). CalcBloc is a product of itmarkerz technologies. The CalcBloc website has its own policy at [calcbloc.com/privacy](https://calcbloc.com/privacy?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss), and the CalcBloc API is covered by the [API terms](https://calcbloc.com/developers/terms?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss).
 
 ## What the add-in sends
 
@@ -15,7 +15,7 @@ Requests go over HTTPS. Like any web request, they also carry your IP address an
 
 ## What CalcBloc does with requests
 
-The API counts requests against the daily and per-minute limits using your API key, or without a key a one-way hash of your IP address (raw addresses are not stored for this). Its request log records the endpoint, the country, the response status and time, and the key's public id or "anonymous"; it does not record the query string (so no salary amounts), your IP address or the key itself. As with any website, the web server and the network in front of it (Cloudflare) may keep standard access logs, which include the requested address and your IP address, for security and troubleshooting. See also the [API terms](https://calcbloc.com/developers/terms) and the [website privacy policy](https://calcbloc.com/privacy). Nothing from API requests is sold or shared for advertising.
+The API counts requests against the daily and per-minute limits using your API key, or without a key a one-way hash of your IP address (raw addresses are not stored for this). Its request log records the endpoint, the country, the response status and time, and the key's public id or "anonymous"; it does not record the query string (so no salary amounts), your IP address or the key itself. As with any website, the web server and the network in front of it (Cloudflare) may keep standard access logs, which include the requested address and your IP address, for security and troubleshooting. See also the [API terms](https://calcbloc.com/developers/terms?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) and the [website privacy policy](https://calcbloc.com/privacy?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss). Nothing from API requests is sold or shared for advertising.
 
 ## What is stored on your device
 
@@ -33,10 +33,12 @@ This storage is not encrypted by the add-in and is not shared with other add-ins
 - No access to other cells, sheets, files or your Microsoft account. The add-in writes to the workbook only when you choose "Insert tax table", which adds a new sheet.
 - No third-party services other than Microsoft's Office.js library, which Microsoft requires add-ins to load from its CDN (`appsforoffice.microsoft.com`).
 
+Links from the add-in to calcbloc.com (in the task pane, the Get Started callout and inserted tables) carry a referral tag naming the add-in (utm_source=calcbloc-excel, utm_medium=app, utm_campaign=itmarkerz-oss) so we can see which product a visit came from; the tag contains no personal or browsing data.
+
 ## Children
 
 The add-in is a business and personal-finance tool and is not directed at children.
 
 ## Changes and contact
 
-We will update this page when the add-in's data handling changes and change the date above. Questions: [calcbloc.com/contact](https://calcbloc.com/contact).
+We will update this page when the add-in's data handling changes and change the date above. Questions: [calcbloc.com/contact](https://calcbloc.com/contact?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss).

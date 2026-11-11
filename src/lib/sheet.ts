@@ -4,6 +4,20 @@ import type { TaxTable } from "./types";
 export const CREDIT_TEXT = "Data by CalcBloc (calcbloc.com/data), licensed CC BY 4.0";
 export const DATA_URL = "https://calcbloc.com/data";
 
+/**
+ * Referral tag for calcbloc.com links the add-in writes into a workbook or shows in the task pane, so the site's
+ * analytics can tell the visit came from this add-in. API calls and data values stay plain.
+ */
+export const APP_UTM = "utm_source=calcbloc-excel&utm_medium=app&utm_campaign=itmarkerz-oss";
+export function appLink(url: string): string {
+  if (!/^https:\/\/(www\.)?calcbloc\.com([/?#]|$)/.test(url) || /[?&]utm_source=/.test(url)) return url;
+  const hashAt = url.indexOf("#");
+  let base = hashAt === -1 ? url : url.slice(0, hashAt);
+  const hash = hashAt === -1 ? "" : url.slice(hashAt);
+  if (/^https:\/\/[^/?]+$/.test(base)) base += "/";
+  return `${base}${base.includes("?") ? "&" : "?"}${APP_UTM}${hash}`;
+}
+
 export type Cell = string | number | boolean;
 
 export interface SheetLink {
@@ -83,10 +97,10 @@ export function planTaxTableSheet(table: TaxTable, existingSheetNames: readonly 
 
   const titleRow = push([`${place}: tax tables ${yearLabel} (${table.currency})`]);
   const creditRow = push([CREDIT_TEXT]);
-  links.push({ row: creditRow, col: 0, url: DATA_URL, text: CREDIT_TEXT });
+  links.push({ row: creditRow, col: 0, url: appLink(DATA_URL), text: CREDIT_TEXT });
   const pageText = `Full table, notes and sources: ${table.pageUrl.replace(/^https:\/\//, "")}`;
   const pageRow = push([pageText]);
-  links.push({ row: pageRow, col: 0, url: table.pageUrl, text: pageText });
+  links.push({ row: pageRow, col: 0, url: appLink(table.pageUrl), text: pageText });
   const status = table.status ? `Status: ${table.status}` : "";
   const period = table.effectiveFrom ? `In force ${table.effectiveFrom} to ${table.effectiveTo ?? "until changed"}` : "";
   push([[period, status, "Rates are decimals shown as percentages; money in " + table.currency + "."].filter(Boolean).join(". ")]);
@@ -135,7 +149,7 @@ export function planTaxTableSheet(table: TaxTable, existingSheetNames: readonly 
 
   push([]);
   const endCredit = push([CREDIT_TEXT]);
-  links.push({ row: endCredit, col: 0, url: table.pageUrl, text: CREDIT_TEXT });
+  links.push({ row: endCredit, col: 0, url: appLink(table.pageUrl), text: CREDIT_TEXT });
 
   const sheetName = uniqueSheetName(`${table.countryName}${table.region ? ` ${table.region.code.toUpperCase()}` : ""} ${table.year}`, existingSheetNames);
   return { sheetName, values, numberFormats: formats, links, headerRow, titleRow, creditRows: [creditRow, endCredit], columnWidths: WIDTHS };

@@ -9,7 +9,7 @@ Draft text for the Partner Center "Office add-in" offer. Character limits are Pa
 | Offer type | Office add-in |
 | Add-in name (manifest DisplayName, max 125) | CalcBloc Tax Tables and Take-Home Pay |
 | Short name if needed (max 30) | CalcBloc |
-| Publisher | itmarkerz technologies ([itmarkerz.co.in](https://itmarkerz.co.in)); the Partner Center account must be in this name |
+| Publisher | itmarkerz technologies ([itmarkerz.co.in](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss)); the Partner Center account must be in this name |
 | Products | Excel |
 | Platforms (from the manifest requirements) | Excel on the web, Excel on Windows (Microsoft 365, Excel 2021 or later), Excel on Mac |
 | Pricing | Free |
@@ -55,13 +55,13 @@ Figures are estimates for planning and comparison, not tax advice. Data by CalcB
 
 | Field | URL | Notes |
 | --- | --- | --- |
-| Support | https://calcbloc.com/contact | live |
+| Support | https://calcbloc.com/contact?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss | live |
 | Privacy policy | https://github.com/itmarkerz/calcbloc-excel/blob/main/PRIVACY.md, or a new page on calcbloc.com (not created yet) | Owner decision; must be public before submission |
 | Terms of use / EULA | https://github.com/itmarkerz/calcbloc-excel/blob/main/TERMS.md, or a new page on calcbloc.com (not created yet) | Owner decision; Partner Center also offers a standard contract |
 | Learn more / documentation | https://github.com/itmarkerz/calcbloc-excel#readme | public once the repo is pushed |
-| Website | https://calcbloc.com | live |
-| API documentation | https://calcbloc.com/developers | live |
-| Data source | https://calcbloc.com/data | live |
+| Website | https://calcbloc.com/?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss | live |
+| API documentation | https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss | live |
+| Data source | https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss | live |
 
 ## Images
 
@@ -85,6 +85,6 @@ Review captures from the local harness (not for the store): see the paths in the
 
 ## Test notes for Microsoft's validation team
 
-- No sign-in or account is needed. The add-in works without an API key (50 requests a day per IP address); if the testing network shares one address and hits the limit, the cell shows an explanation. A free key for testers can be created at https://calcbloc.com/developers/keys and pasted into Home > CalcBloc > Tax tables > Settings.
+- No sign-in or account is needed. The add-in works without an API key (50 requests a day per IP address); if the testing network shares one address and hits the limit, the cell shows an explanation. A free key for testers can be created at https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss and pasted into Home > CalcBloc > Tax tables > Settings.
 - Try: `=CALCBLOC.NET("uk", 50000)`, `=CALCBLOC.TAX("poland", 120000)`, `=CALCBLOC.RATE("ireland", "usc", 4)`, `=CALCBLOC.EMPLOYER_COST("us", 90000, "ny")`, then Home > CalcBloc > Tax tables > Insert tax table.
 - Expected errors are explained in the cell tooltip, e.g. `=CALCBLOC.NET("poland", 50000)` returns #N/A because Poland has tax tables only.

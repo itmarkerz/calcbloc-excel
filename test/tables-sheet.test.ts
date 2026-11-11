@@ -44,8 +44,8 @@ describe("Insert tax table layout", () => {
   it("starts with a title, the CalcBloc credit linked to calcbloc.com/data and the calcbloc.com page", () => {
     expect(plan.values[0][0]).toBe("Ireland: tax tables 2026 (EUR)");
     expect(plan.values[1][0]).toBe(CREDIT_TEXT);
-    expect(plan.links).toContainEqual({ row: 1, col: 0, url: DATA_URL, text: CREDIT_TEXT });
-    expect(plan.links.find((l) => l.row === 2)!.url).toBe("https://calcbloc.com/ireland/tax-tables/2026");
+    expect(plan.links).toContainEqual({ row: 1, col: 0, url: `${DATA_URL}?utm_source=calcbloc-excel&utm_medium=app&utm_campaign=itmarkerz-oss`, text: CREDIT_TEXT });
+    expect(plan.links.find((l) => l.row === 2)!.url).toBe("https://calcbloc.com/ireland/tax-tables/2026?utm_source=calcbloc-excel&utm_medium=app&utm_campaign=itmarkerz-oss");
   });
 
   it("has one row per band or value with its official source URL as a hyperlink", () => {
@@ -63,7 +63,8 @@ describe("Insert tax table layout", () => {
   it("ends with the credit linked to the calcbloc.com table page", () => {
     const last = plan.values.length - 1;
     expect(plan.values[last][0]).toBe(CREDIT_TEXT);
-    expect(plan.links.find((l) => l.row === last)!.url).toBe(ie.pageUrl);
+    expect(plan.links.find((l) => l.row === last)!.url).toBe(`${ie.pageUrl}?utm_source=calcbloc-excel&utm_medium=app&utm_campaign=itmarkerz-oss`);
+    expect(ie.pageUrl).toBe("https://calcbloc.com/ireland/tax-tables/2026");
     expect(plan.creditRows).toEqual([1, last]);
   });
 
