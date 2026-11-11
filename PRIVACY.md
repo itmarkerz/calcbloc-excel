@@ -6,26 +6,28 @@ This policy covers the CalcBloc add-in for Microsoft Excel (the "add-in"), publi
 
 ## What the add-in sends
 
-The add-in calls the CalcBloc API at `https://calcbloc.com/api/v1` only when a CALCBLOC formula or the task pane needs data that is not already cached on your device. Each request contains only:
+The add-in needs a free CalcBloc API key. Until you save one in the task pane it sends nothing to calcbloc.com; formulas and the task pane show how to get a key instead.
+
+With a key saved, the add-in calls the CalcBloc API at `https://calcbloc.com/api/v1` only when a CALCBLOC formula or the task pane needs data that is not already cached on your device. Each request contains only:
 
 - the arguments of that formula or table request: country, region, tax year, salary or income amount, and the tax-table section;
-- your CalcBloc API key, if you entered one, in the `X-API-Key` header.
+- your CalcBloc API key, in the `X-API-Key` header.
 
 Requests go over HTTPS. Like any web request, they also carry your IP address and standard browser headers. The add-in does not send your name, email address, Microsoft account details, workbook name, file contents, or any cell other than the formula's own arguments.
 
 ## What CalcBloc does with requests
 
-The API counts requests against the daily and per-minute limits using your API key, or without a key a one-way hash of your IP address (raw addresses are not stored for this). Its request log records the endpoint, the country, the response status and time, and the key's public id or "anonymous"; it does not record the query string (so no salary amounts), your IP address or the key itself. As with any website, the web server and the network in front of it (Cloudflare) may keep standard access logs, which include the requested address and your IP address, for security and troubleshooting. See also the [API terms](https://calcbloc.com/developers/terms?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) and the [website privacy policy](https://calcbloc.com/privacy?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss). Nothing from API requests is sold or shared for advertising.
+The API counts requests against the daily and per-minute limits of your API key. Its request log records the endpoint, the country, the response status and time, and the key's public id ("anon" if a key is not recognised); it does not record the query string (so no salary amounts), your IP address or the key itself. As with any website, the web server and the network in front of it (Cloudflare) may keep standard access logs, which include the requested address and your IP address, for security and troubleshooting. See also the [API terms](https://calcbloc.com/developers/terms?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) and the [website privacy policy](https://calcbloc.com/privacy?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss). Nothing from API requests is sold or shared for advertising.
 
 ## What is stored on your device
 
 The add-in stores the following in the add-in's private storage on your device (`OfficeRuntime.storage`, separate from the workbook):
 
-- your settings: API key (optional), default country and default region;
+- your settings: API key, default country and default region;
 - cached API answers (tax tables and calculation results) for up to 7 days, so recalculating does not repeat requests;
 - the request-limit counters the API last reported.
 
-This storage is not encrypted by the add-in and is not shared with other add-ins. "Clear cached data" in the task pane removes the cached answers; removing the API key in Settings deletes it; uninstalling the add-in removes its storage. Results that formulas return, and tax tables you insert, are saved in your workbook like any other cell values.
+This storage is not encrypted by the add-in and is not shared with other add-ins. "Clear cached data" in the task pane removes the cached answers; removing the API key in Settings deletes it (the add-in then stops sending requests); uninstalling the add-in removes its storage. Results that formulas return, and tax tables you insert, are saved in your workbook like any other cell values.
 
 ## What the add-in does not do
 

@@ -12,7 +12,7 @@ Draft text for the Partner Center "Office add-in" offer. Character limits are Pa
 | Publisher | itmarkerz technologies ([itmarkerz.co.in](https://itmarkerz.co.in/?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss)); the Partner Center account must be in this name |
 | Products | Excel |
 | Platforms (from the manifest requirements) | Excel on the web, Excel on Windows (Microsoft 365, Excel 2021 or later), Excel on Mac |
-| Pricing | Free |
+| Pricing | Free (requires a free CalcBloc API key from calcbloc.com/developers/keys) |
 | Categories | Finance; Productivity (secondary: Data + analytics) |
 | Industries | Professional services; Financial services (optional) |
 | Languages | English (United States) |
@@ -41,13 +41,13 @@ The task pane adds a worksheet with every income tax band, threshold and employe
 
 Take-home pay, income tax and employer cost for the United States (all states), United Kingdom (England, Scotland, Wales), Canada (all provinces), Australia, New Zealand, Ireland, India, Germany, Spain, the Netherlands and Singapore, plus take-home pay in France. Tax tables for more than 20 countries, including Austria, Denmark, Finland, Italy, Norway, Poland, Portugal, Sweden and Switzerland. New countries appear automatically as CalcBloc adds them.
 
-**Light on requests**
+**Free API key, light on requests**
 
-Works without signing up: up to 50 requests a day per internet address. Answers are cached on your device for a week and shared between formulas, so a typical workbook uses only a few. A free API key from calcbloc.com raises the limit to 5,000 a day.
+The add-in is free and needs a free CalcBloc API key: sign up with your email at calcbloc.com/developers/keys, then paste the key in Home > CalcBloc > Tax tables > Settings. The key allows 5,000 requests a day. Answers are cached on your device for a week and shared between formulas, so a typical workbook uses only a few.
 
 **Private by design**
 
-Only the formula's own inputs (country, region, year, amount) are sent to calcbloc.com. No sign-in, no tracking, no access to the rest of your workbook.
+Only the formula's own inputs (country, region, year, amount) and your API key are sent to calcbloc.com. No Microsoft sign-in, no tracking, no access to the rest of your workbook. Published by itmarkerz technologies, which operates CalcBloc.
 
 Figures are estimates for planning and comparison, not tax advice. Data by CalcBloc (calcbloc.com/data), licensed CC BY 4.0.
 
@@ -85,6 +85,7 @@ Review captures from the local harness (not for the store): see the paths in the
 
 ## Test notes for Microsoft's validation team
 
-- No sign-in or account is needed. The add-in works without an API key (50 requests a day per IP address); if the testing network shares one address and hits the limit, the cell shows an explanation. A free key for testers can be created at https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss and pasted into Home > CalcBloc > Tax tables > Settings.
+- The add-in needs a free CalcBloc API key; no Microsoft or other sign-in is involved. Reviewer key: `<paste a reviewer key here before submitting; revoke it after review>`. Paste it into Home > CalcBloc > Tax tables > Settings and click Save settings. (Keys can also be created at https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss.)
+- Without a key: the task pane shows an "Add your free API key" card, and formulas return #N/A with set-up instructions in the tooltip; no request is made.
 - Try: `=CALCBLOC.NET("uk", 50000)`, `=CALCBLOC.TAX("poland", 120000)`, `=CALCBLOC.RATE("ireland", "usc", 4)`, `=CALCBLOC.EMPLOYER_COST("us", 90000, "ny")`, then Home > CalcBloc > Tax tables > Insert tax table.
 - Expected errors are explained in the cell tooltip, e.g. `=CALCBLOC.NET("poland", 50000)` returns #N/A because Poland has tax tables only.

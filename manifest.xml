@@ -103,7 +103,7 @@
         <bt:String id="TaskpaneButton.Label" DefaultValue="Tax tables"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Type =CALCBLOC. in a cell to see the functions, or open Home &gt; Tax tables to insert an official tax table."/>
+        <bt:String id="GetStarted.Description" DefaultValue="First add your free CalcBloc API key: open Home &gt; Tax tables and paste it under Settings. Then type =CALCBLOC. in a cell to see the functions, or insert an official tax table."/>
         <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Insert official tax tables and set your CalcBloc API key and default country."/>
       </bt:LongStrings>
     </Resources>

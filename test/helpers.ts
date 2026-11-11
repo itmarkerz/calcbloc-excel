@@ -9,6 +9,9 @@ import type { CountriesResponse, TaxTable } from "../src/lib/types";
 
 export const FIXTURES = join(__dirname, "fixtures");
 
+/** A well-formed free API key. The add-in makes no request without a key, so the test deps save this one by default. */
+export const TEST_KEY = "cb_" + "T1e2s3t4K5e6y7A8b9C0d1E2f3G4h5I6";
+
 export function loadFixture<T = unknown>(p: string): T | null {
   const file = join(FIXTURES, p);
   return existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as T) : null;
@@ -38,11 +41,12 @@ export function jsonResponse(status: number, body: unknown, headers: Record<stri
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...headers } });
 }
 
+/** Deps as the add-in wires them: the client reads the API key from the settings (TEST_KEY unless settings say otherwise). */
 export function makeDeps(opts: { fetch?: MockFetch; settings?: Settings; client?: Partial<ClientOptions> } = {}) {
   const fetch = opts.fetch ?? fixtureFetch();
   const store = memoryStore();
-  let settings: Settings = opts.settings ?? {};
-  const client = new CalcBlocClient({ store, fetch, sleep: async () => {}, ...opts.client });
+  let settings: Settings = opts.settings ?? { apiKey: TEST_KEY };
+  const client = new CalcBlocClient({ store, fetch, sleep: async () => {}, getApiKey: async () => settings.apiKey, ...opts.client });
   const deps: Deps = { client, settings: async () => settings };
   return { deps, fetch, store, client, setSettings: (s: Settings) => (settings = s) };
 }

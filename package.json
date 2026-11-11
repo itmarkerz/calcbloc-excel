@@ -4,7 +4,7 @@
   "private": true,
   "description": "CalcBloc for Microsoft Excel: custom functions for take-home pay, income tax, employer cost and tax-table rates, plus a task pane that inserts official tax tables with their sources.",
   "license": "MIT",
-  "author": "CalcBloc (https://calcbloc.com)",
+  "author": "itmarkerz technologies (https://itmarkerz.co.in)",
   "homepage": "https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=package&utm_campaign=itmarkerz-oss",
   "repository": {
     "type": "git",

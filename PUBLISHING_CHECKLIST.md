@@ -4,20 +4,20 @@ Nothing has been submitted. Items marked **Owner** need a decision or an account
 
 ## 1. Decisions (Owner)
 
-- [ ] **Publisher account**: which legal entity publishes (CalcBloc / itmarkerz). The name and verified domain appear on the listing.
+- [x] **Publisher**: itmarkerz technologies (decided 11 November 2026; CalcBloc is the product name). The Partner Center account and the publisher display name must be in that name; the verified domain appears on the listing.
 - [ ] **Production host** for the add-in's web files (`dist/` after a build: `taskpane.html`, `taskpane.js`, `functions.js`, `functions.json`, `taskpane.css`, `assets/`). Needs HTTPS, a stable URL and high availability, because every user loads the add-in from it. Options:
   - a static path on calcbloc.com (served by the existing nginx on itmarkerz-sec behind Cloudflare), for example `/excel-addin/`; one domain for the add-in, the API and the policies;
   - GitHub Pages from this repository (free, separate domain `itmarkerz.github.io`; add it to `<AppDomains>` only if the pane navigates there).
   Whichever host is chosen must serve the files with correct MIME types and must not block framing by Office (no `X-Frame-Options: DENY`/`SAMEORIGIN` or restrictive `frame-ancestors` on these files; calcbloc.com currently sends `X-Frame-Options: SAMEORIGIN` site-wide, so a path on calcbloc.com would need that header removed for the add-in path).
 - [ ] **Privacy policy and terms URLs**: publish [PRIVACY.md](PRIVACY.md) and [TERMS.md](TERMS.md) (after review) on calcbloc.com or link the GitHub copies. Both must be public before submission.
 - [ ] **Listing text and categories**: review [appsource/listing.md](appsource/listing.md).
-- [ ] **Anonymous API access**: the add-in relies on anonymous access for first use (50/day per IP). Shared corporate networks can exhaust that quickly; decide whether to keep anonymous access on for the calculation endpoints (currently allowed in production, documented as key-required) and whether a higher anonymous allowance or an in-pane "get a free key" flow is wanted.
+- [x] **API key**: decided 11 November 2026 that the add-in **requires a free API key** (shared networks would exhaust a per-address allowance). Without a key it makes no request; the task pane opens with a set-up card linking to calcbloc.com/developers/keys, and formulas return `#N/A` with the same instructions in the tooltip.
 
 ## 2. Partner Center account (Owner)
 
 - [ ] Enrol in the Microsoft AI Cloud Partner Program and open a Partner Center account with the **Microsoft 365 and Copilot** program (the program used for Office add-ins), as a company account.
 - [ ] Complete business verification (legal entity, address, domain email). Verification can take several days.
-- [ ] Set the publisher display name and contact details.
+- [ ] Set the publisher display name (itmarkerz technologies) and contact details.
 - [ ] Optional later: Publisher Attestation in the Microsoft 365 App Compliance program (shows a badge; asks about data handling, matching PRIVACY.md).
 
 ## 3. Build and host
@@ -48,8 +48,8 @@ Microsoft's [commercial marketplace certification policies](https://learn.micros
 - [ ] **Value and accuracy**: the listing must describe what the add-in does; claims such as country coverage must match the live API on the day of submission.
 - [ ] **Works as described on all declared platforms** (1120.3): Office on the web and Mac included, in current Edge, Chrome, Firefox and Safari, and usable on a touch-only device; no broken features, no "beta" or "test" labels, no placeholder text.
 - [ ] **Custom functions** (1120.5): every function has `helpUrl` in its metadata (done, from `@helpurl`); the functions HTML, JavaScript and JSON are hosted on the same domain (true for any single host); the add-in also has add-in commands (the Home > CalcBloc > Tax tables button); certification test notes cover at least one custom function (in the listing draft).
-- [ ] **External services** (1100.5): the add-in depends on calcbloc.com; sign-up must be clear and simple. The task pane links to the free key page and the key is optional; the listing and privacy policy say what is sent. The service must stay available during and after review.
-- [ ] **Testability** (100.14): no sign-in is needed to try it (anonymous access). Provide the test notes and, if useful, a reviewer API key in the Partner Center "Notes for certification" field.
+- [ ] **External services** (1100.5): the add-in depends on calcbloc.com; sign-up must be clear and simple. The add-in needs a free key: the task pane's set-up card links to the free key page (email sign-up, key shown at once), and the listing and privacy policy say so and what is sent. The service must stay available during and after review.
+- [ ] **Testability** (100.14): reviewers need an API key. Create a reviewer key and put it, with the test notes, in the Partner Center "Notes for certification" field (revoke it after review).
 - [ ] **Privacy policy** (100.5, 100.6) linked from the listing and specific to the add-in; support URL reachable.
 - [ ] **Graphics** (100.3, 1120.1): screenshots 1280 × 720 PNG; logo PNG between 216 and 350 px square (`assets/icon-300.png`); high-resolution manifest icon present (64 px); branding is CalcBloc's own, no Microsoft marks.
 - [ ] **Accessibility and UI**: readable task pane, labels on inputs, works in narrow panes.

@@ -17,7 +17,7 @@ function json(status: number, body: unknown, remaining: number): Response {
     status,
     headers: {
       "Content-Type": "application/json",
-      "X-RateLimit-Limit": "50",
+      "X-RateLimit-Limit": "5000",
       "X-RateLimit-Remaining": String(Math.max(0, remaining)),
       "X-RateLimit-Reset": "3600",
     },
@@ -25,7 +25,7 @@ function json(status: number, body: unknown, remaining: number): Response {
 }
 
 export function makeFixtureFetch(load: FixtureLoader) {
-  let remaining = 50;
+  let remaining = 5000;
   return async function fixtureFetch(url: string): Promise<Response> {
     remaining--;
     const u = new URL(url);

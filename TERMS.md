@@ -14,7 +14,7 @@ Results are estimates for planning, budgeting and comparison. They are not tax, 
 
 ## Fair use and limits
 
-Use the add-in within the CalcBloc API limits: without a key, 50 requests a day and 5 a minute per internet address; with a free key, the limits shown at [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss#limits). Don't try to get around the limits, resell the API through the add-in, or use it to overload the service. Keep your API key private; you are responsible for requests made with it.
+The add-in requires a free CalcBloc API key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss) and makes no requests without one. Use it within that key's limits (5,000 requests a day and 60 a minute; current limits at [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=docs&utm_campaign=itmarkerz-oss#limits)). Don't try to get around the limits, resell the API through the add-in, or use it to overload the service. Keep your API key private; you are responsible for requests made with it.
 
 ## Attribution
 
@@ -26,7 +26,7 @@ The add-in and the data are provided "as is", without warranty of any kind, to t
 
 ## Licence
 
-The add-in's source code is available under the MIT licence (see [LICENSE](LICENSE)). Microsoft, Excel and Office are trademarks of the Microsoft group of companies; CalcBloc is not affiliated with Microsoft.
+The add-in's source code is available under the MIT licence, copyright itmarkerz technologies (see [LICENSE](LICENSE)). Microsoft, Excel and Office are trademarks of the Microsoft group of companies; CalcBloc is not affiliated with Microsoft.
 
 ## Contact
 

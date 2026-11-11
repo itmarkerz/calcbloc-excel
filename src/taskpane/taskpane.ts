@@ -1,4 +1,5 @@
 /* global Office, document */
+import { NO_KEY_MESSAGE } from "../lib/client";
 import { CalcBlocError } from "../lib/errors";
 import type { CountryInfo } from "../lib/types";
 import { getDeps } from "../runtime";
@@ -57,7 +58,23 @@ async function showUsage(): Promise<void> {
   const q = await getDeps().client.quotaState();
   if (!q || q.remaining === null) return;
   const reset = q.resetAt ? new Date(q.resetAt).toISOString().slice(11, 16) : "";
-  $("usage").textContent = `${q.keyed ? "With your API key" : "Without a key"}: ${q.remaining} of ${q.limit ?? "?"} requests left today${reset ? ` (resets ${reset} UTC)` : ""}.`;
+  $("usage").textContent = `With your API key: ${q.remaining} of ${q.limit ?? "?"} requests left today${reset ? ` (resets ${reset} UTC)` : ""}.`;
+}
+
+/**
+ * First run (or key removed): the add-in makes no request without a key, so show the set-up card, explain it in the
+ * insert section and put the cursor in the key field instead of loading the country list.
+ */
+function showSetup(needsKey: boolean): void {
+  $("setup").hidden = !needsKey;
+  if (needsKey) {
+    setStatus("ins-status", NO_KEY_MESSAGE, "error");
+    $<HTMLButtonElement>("ins-go").disabled = true;
+    if (countries.length === 0) fill($<HTMLSelectElement>("ins-country"), [{ value: "", label: "Save your API key first" }]);
+    $<HTMLInputElement>("set-key").focus();
+  } else if ($("ins-status").textContent === NO_KEY_MESSAGE) {
+    setStatus("ins-status", "");
+  }
 }
 
 async function loadCountries(): Promise<void> {
@@ -112,13 +129,20 @@ async function onSave(): Promise<void> {
     return;
   }
   const before = (await deps.settings()).apiKey ?? "";
-  await deps.settingsStore.set({
-    apiKey: key,
-    defaultCountry: $<HTMLSelectElement>("set-country").value,
-    defaultRegion: $<HTMLSelectElement>("set-region").value,
-  });
+  // Until a key is saved the country lists are empty: leave the saved default country and region untouched then.
+  await deps.settingsStore.set(
+    countries.length
+      ? { apiKey: key, defaultCountry: $<HTMLSelectElement>("set-country").value, defaultRegion: $<HTMLSelectElement>("set-region").value }
+      : { apiKey: key },
+  );
   if (before !== key) await deps.client.resetQuota();
-  setStatus("set-status", "Saved. Recalculate (Ctrl+Alt+F9) to refresh formulas that used the old settings.", "ok");
+  setStatus(
+    "set-status",
+    key ? "Saved. Recalculate (Ctrl+Alt+F9) to refresh formulas that used the old settings." : "Saved without a key: CalcBloc functions and tables need a free API key.",
+    key ? "ok" : "error",
+  );
+  showSetup(!key);
+  if (key && countries.length === 0) await loadCountries();
 }
 
 async function onClearCache(): Promise<void> {
@@ -141,6 +165,10 @@ async function init(): Promise<void> {
     $("set-key-show").textContent = show ? "Hide" : "Show";
     $("set-key-show").setAttribute("aria-pressed", String(show));
   });
+  if (!(await getDeps().client.hasApiKey())) {
+    showSetup(true);
+    return;
+  }
   await loadCountries();
 }
 
