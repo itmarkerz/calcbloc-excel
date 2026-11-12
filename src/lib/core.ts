@@ -50,6 +50,18 @@ const ALIASES: Record<string, string> = {
   hu: "hungary",
   sk: "slovakia",
   gr: "greece",
+  lv: "latvia",
+  latvija: "latvia",
+  hr: "croatia",
+  hrvatska: "croatia",
+  ee: "estonia",
+  eesti: "estonia",
+  bg: "bulgaria",
+  lt: "lithuania",
+  lietuva: "lithuania",
+  mt: "malta",
+  cy: "cyprus",
+  is: "iceland",
   be: "belgium",
 };
 

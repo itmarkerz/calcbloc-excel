@@ -39,7 +39,7 @@ The task pane adds a worksheet with every income tax band, threshold and employe
 
 **Coverage**
 
-Take-home pay, income tax and employer cost for the United States (all states), United Kingdom (England, Scotland, Wales), Canada (all provinces), Australia, New Zealand, Ireland, India, Germany, Spain, the Netherlands and Singapore, plus take-home pay in France. Tax tables for more than 20 countries, including Austria, Denmark, Finland, Italy, Norway, Poland, Portugal, Sweden and Switzerland. New countries appear automatically as CalcBloc adds them.
+Take-home pay, income tax and employer cost for the United States (all states), United Kingdom (England, Scotland, Wales), Canada (all provinces), Australia, New Zealand, Ireland, India, Germany, Spain, the Netherlands and Singapore, plus take-home pay in France. Tax tables for 37 countries, including Austria, Denmark, Finland, Italy, Norway, Poland, Portugal, Sweden and Switzerland. New countries appear automatically as CalcBloc adds them.
 
 **Light on requests**
 
