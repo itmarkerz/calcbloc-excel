@@ -102,7 +102,7 @@ Estimated total annual cost of employing someone: salary plus employer social se
 The add-in reads the list of countries, regions, years and parameters from the API (`GET /api/v1/countries`) at run time, so new countries appear without an update. At the time of writing (November 2026):
 
 - **NET, TAX and EMPLOYER_COST**: United States (by state), United Kingdom (England, Scotland, Wales), Canada (by province), Australia, New Zealand, Ireland, India, Germany, Spain, Netherlands, Singapore; France for NET and TAX.
-- **Tax tables only** (RATE, TAX bracket estimate, Insert tax table): Austria, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, Greece, Hungary, Iceland, Italy, Latvia, Lithuania, Luxembourg, Malta, Norway, Poland, Portugal, Romania, Slovakia, Slovenia, Sweden, Switzerland, United Arab Emirates.
+- **Tax tables only** (RATE, TAX bracket estimate, Insert tax table): Austria, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, Greece, Hungary, Iceland, Italy, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Norway, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Sweden, Switzerland, Türkiye, Ukraine, United Arab Emirates.
 
 The current list with every parameter is on [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss#parameters); tax tables for each country are linked from [calcbloc.com/data](https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 

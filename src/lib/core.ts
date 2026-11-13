@@ -62,6 +62,16 @@ const ALIASES: Record<string, string> = {
   mt: "malta",
   cy: "cyprus",
   is: "iceland",
+  ua: "ukraine",
+  ukraina: "ukraine",
+  "україна": "ukraine",
+  li: "liechtenstein",
+  rs: "serbia",
+  srbija: "serbia",
+  "србија": "serbia",
+  tr: "turkey",
+  turkiye: "turkey",
+  "türkiye": "turkey",
   be: "belgium",
 };
 

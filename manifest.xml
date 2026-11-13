@@ -8,7 +8,7 @@
   <ProviderName>itmarkerz technologies</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="CalcBloc Tax Tables and Take-Home Pay"/>
-  <Description DefaultValue="Excel functions for take-home pay, income tax, employer cost and official tax rates for 37 countries, plus a task pane that inserts 2026 tax tables with their sources."/>
+  <Description DefaultValue="Excel functions for take-home pay, income tax, employer cost and official tax rates for 41 countries, plus a task pane that inserts 2026 tax tables with their sources."/>
   <IconUrl DefaultValue="https://localhost:3104/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3104/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://calcbloc.com/contact"/>
