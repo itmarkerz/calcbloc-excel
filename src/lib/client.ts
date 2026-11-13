@@ -341,10 +341,24 @@ export class CalcBlocClient {
           await this.store.removeItem(k);
         }
       }
-      await this.store.setItem(key, JSON.stringify(entry));
+      const raw = JSON.stringify(entry);
+      try {
+        await this.store.setItem(key, raw);
+      } catch {
+        // Storage full (OfficeRuntime.storage allows about 10 MB, and a tax table can be up to 1 MB): drop the oldest
+        // half of the stored answers and try once more.
+        const others = Object.keys(index).filter((k) => k !== key).sort((a, b) => index[a] - index[b]);
+        for (const k of others.slice(0, Math.ceil(others.length / 2))) {
+          delete index[k];
+          this.mem.delete(k);
+          await this.store.removeItem(k).catch(() => undefined);
+        }
+        await this.store.setItem(key, raw);
+      }
       await this.store.setItem(INDEX_KEY, JSON.stringify(index));
     } catch {
-      // Storage full or unavailable: the memory cache still works for this session.
+      // Storage still full or unavailable: the memory cache still works for this session.
+      if (this.index) delete this.index[key];
     }
   }
 }

@@ -52,6 +52,21 @@ describe("CalcBlocClient caching", () => {
     expect(c2.stats.storeHits).toBe(1);
   });
 
+  it("when device storage is full, drops the oldest stored answers and keeps the new one", async () => {
+    // A store that, like OfficeRuntime.storage, refuses writes past a size budget.
+    const base = memoryStore();
+    const budget = 3 * 1024 * 1024;
+    const used = () => [...base.data.values()].reduce((n, v) => n + v.length, 0);
+    const store = { ...base, async setItem(k: string, v: string) { if (used() - (base.data.get(k)?.length ?? 0) + v.length > budget) throw new Error("QuotaExceeded"); return base.setItem(k, v); } };
+    const big = (n: number) => ok({ country: `c${n}`, rows: ["x".repeat(900 * 1024)] });
+    const c = new CalcBlocClient({ store, fetch: scripted([0, 1, 2, 3, 4].map((n) => () => big(n))) });
+    for (const n of [0, 1, 2, 3, 4]) await c.taxTable(`c${n}`, "2026");
+    const stored = [...base.data.keys()].filter((k) => k.includes("tax-tables"));
+    expect(stored.some((k) => k.includes("/c4/"))).toBe(true);
+    expect(stored.some((k) => k.includes("/c0/"))).toBe(false);
+    expect(used()).toBeLessThanOrEqual(budget);
+  });
+
   it("refetches after the cache lifetime", async () => {
     let now = 1_000_000;
     const fetch = fixtureFetch();
