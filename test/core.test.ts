@@ -3,7 +3,7 @@ import * as core from "../src/lib/core";
 import { CalcBlocError } from "../src/lib/errors";
 import { annualTaxFromSection } from "../src/lib/tables";
 import type { CalcResponse } from "../src/lib/types";
-import { fixtureFetch, jsonResponse, loadFixture, makeDeps } from "./helpers";
+import { fixtureFetch, jsonResponse, loadFixture, makeDeps, type MockFetch } from "./helpers";
 
 const usNet = () => loadFixture<CalcResponse>("calc/net-salary_country-us_region-ca_salary-60000.json")!;
 
@@ -203,5 +203,56 @@ describe("CALCBLOC.EMPLOYER_COST", () => {
   it("France has take-home pay but no employer-cost calculation yet", async () => {
     const { deps } = makeDeps();
     await expect(core.employerCost(deps, "france", 50000)).rejects.toThrow(/no employer cost calculation for France/);
+  });
+});
+
+describe("country identifiers (API 1.7)", () => {
+  // Every country key in the API's country-codes.ts (42), with its short code, ISO code and English name.
+  const ALL: [key: string, short: string, iso: string, name: string][] = [
+    ["us", "us", "US", "United States"], ["uk", "uk", "GB", "United Kingdom"], ["australia", "au", "AU", "Australia"],
+    ["new-zealand", "nz", "NZ", "New Zealand"], ["canada", "ca", "CA", "Canada"], ["ireland", "ie", "IE", "Ireland"],
+    ["india", "in", "IN", "India"], ["germany", "de", "DE", "Germany"], ["spain", "es", "ES", "Spain"],
+    ["netherlands", "nl", "NL", "Netherlands"], ["france", "fr", "FR", "France"], ["singapore", "sg", "SG", "Singapore"],
+    ["uae", "ae", "AE", "United Arab Emirates"], ["italy", "it", "IT", "Italy"], ["portugal", "pt", "PT", "Portugal"],
+    ["belgium", "be", "BE", "Belgium"], ["switzerland", "ch", "CH", "Switzerland"], ["denmark", "dk", "DK", "Denmark"],
+    ["sweden", "se", "SE", "Sweden"], ["austria", "at", "AT", "Austria"], ["poland", "pl", "PL", "Poland"],
+    ["luxembourg", "lu", "LU", "Luxembourg"], ["czechia", "cz", "CZ", "Czechia"], ["norway", "no", "NO", "Norway"],
+    ["finland", "fi", "FI", "Finland"], ["slovenia", "si", "SI", "Slovenia"], ["romania", "ro", "RO", "Romania"],
+    ["hungary", "hu", "HU", "Hungary"], ["slovakia", "sk", "SK", "Slovakia"], ["greece", "gr", "GR", "Greece"],
+    ["latvia", "lv", "LV", "Latvia"], ["croatia", "hr", "HR", "Croatia"], ["estonia", "ee", "EE", "Estonia"],
+    ["bulgaria", "bg", "BG", "Bulgaria"], ["lithuania", "lt", "LT", "Lithuania"], ["malta", "mt", "MT", "Malta"],
+    ["cyprus", "cy", "CY", "Cyprus"], ["iceland", "is", "IS", "Iceland"], ["ukraine", "ua", "UA", "Ukraine"],
+    ["liechtenstein", "li", "LI", "Liechtenstein"], ["serbia", "rs", "RS", "Serbia"], ["turkey", "tr", "TR", "Turkey"],
+  ];
+  const countriesFetch = () => {
+    const fn = (async (url: string, init?: { headers?: Record<string, string> }) => {
+      fn.calls.push({ url, headers: init?.headers ?? {} });
+      return jsonResponse(200, { countries: ALL.map(([code, , , name]) => ({ code, name })) });
+    }) as MockFetch;
+    fn.calls = [];
+    return fn;
+  };
+
+  it("accepts, for all 42 countries, the old key, the short code, the ISO code and the English name, in any case", async () => {
+    expect(ALL).toHaveLength(42);
+    expect(new Set(ALL.map(([, s]) => s)).size).toBe(42);
+    const { deps } = makeDeps({ fetch: countriesFetch() });
+    for (const [key, short, iso, name] of ALL) {
+      for (const input of [key, key.toUpperCase(), short, short.toUpperCase(), iso, iso.toLowerCase(), name, name.toUpperCase(), name.toLowerCase()]) {
+        expect((await core.resolveCountry(deps, input)).code, input).toBe(key);
+      }
+    }
+  });
+
+  it("resolves de, fr, gb and nz, and keeps the older keys", async () => {
+    const { deps } = makeDeps({ fetch: countriesFetch() });
+    const code = async (s: string) => (await core.resolveCountry(deps, s)).code;
+    expect(await code("de")).toBe("germany");
+    expect(await code("fr")).toBe("france");
+    expect(await code("gb")).toBe("uk");
+    expect(await code("GB")).toBe("uk");
+    expect(await code("nz")).toBe("new-zealand");
+    expect(await code("new-zealand")).toBe("new-zealand");
+    expect(await code("Türkiye")).toBe("turkey");
   });
 });

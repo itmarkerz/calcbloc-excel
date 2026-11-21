@@ -59,6 +59,8 @@ async function showUsage(): Promise<void> {
   $("key-prompt").hidden = !prompt;
   if (prompt) $<HTMLInputElement>("set-key").focus();
   const q = await getDeps().client.quotaState();
+  // The keyless daily figure comes from the API's X-RateLimit-Limit header, never typed in here.
+  $("key-prompt-limit").textContent = q && !q.keyed && q.limit !== null && q.limit > 0 ? ` (${q.limit.toLocaleString("en-US")} requests a day)` : "";
   if (!q || q.remaining === null) return;
   const reset = q.resetAt ? new Date(q.resetAt).toISOString().slice(11, 16) : "";
   $("usage").textContent = `${q.keyed ? "With your API key" : "Without a key"}: ${q.remaining} of ${q.limit ?? "?"} requests left today${reset ? ` (resets ${reset} UTC)` : ""}.`;
