@@ -5,7 +5,7 @@ import { memoryStore } from "../src/lib/storage";
 import { fixtureFetch, jsonResponse, type MockFetch } from "./helpers";
 
 const ok = (body: unknown, remaining = 40, reset = 3600) =>
-  jsonResponse(200, body, { "X-RateLimit-Limit": "50", "X-RateLimit-Remaining": String(remaining), "X-RateLimit-Reset": String(reset) });
+  jsonResponse(200, body, { "X-RateLimit-Limit": "300", "X-RateLimit-Remaining": String(remaining), "X-RateLimit-Reset": String(reset) });
 
 function scripted(responses: (() => Response)[]): MockFetch {
   let i = 0;
@@ -145,7 +145,7 @@ describe("CalcBlocClient limits", () => {
     const err = await c.taxTable("uk").catch((e) => e);
     expect(err).toBeInstanceOf(CalcBlocError);
     expect(err.kind).toBe("limited");
-    expect(err.message).toMatch(/^Add your free API key: .*50 a day/);
+    expect(err.message).toMatch(/^Add your free API key: the free daily allowance without a key \(300 requests a day\) is used up/);
     expect(err.message).toContain("https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=app&utm_campaign=itmarkerz-oss");
     expect(err.message).toContain("CalcBloc task pane (Home > CalcBloc > Tax tables > Settings)");
     expect(err.message).toMatch(/2 h/);
@@ -164,6 +164,14 @@ describe("CalcBlocClient limits", () => {
     expect(fetch.calls).toHaveLength(1);
     now += 31_000;
     await expect(c.taxTable("uk")).resolves.toEqual({ ok: true });
+  });
+
+  it("a short 429 without a key is the per-minute allowance, still with the free key pointer", async () => {
+    const fetch = scripted([() => jsonResponse(429, { error: { code: "rate_limited", message: "Too many" } }, { "Retry-After": "30" })]);
+    const err = await new CalcBlocClient({ store: memoryStore(), fetch, now: () => 0 }).countries().catch((e) => e);
+    expect(err.message).toMatch(/^Add your free API key: the free per-minute allowance without a key is used up for this minute/);
+    expect(err.message).toContain(KEYS_URL_APP);
+    expect(err.message).toContain("Home > CalcBloc > Tax tables > Settings");
   });
 
   it("remembers the limit state across sessions (same device store)", async () => {
@@ -226,10 +234,13 @@ describe("CalcBlocClient limits", () => {
     const used = new CalcBlocClient({ store: memoryStore(), fetch: scripted([() => ok({}, 0, 600)]), now });
     await used.countries();
     expect(await used.needsKeyPrompt()).toBe(true);
-    const limited = new CalcBlocClient({ store: memoryStore(), fetch: scripted([() => jsonResponse(429, { error: { code: "rate_limited", message: "Daily limit of 50 requests reached." } }, { "Retry-After": "40000" })]), now });
+    const limited = new CalcBlocClient({ store: memoryStore(), fetch: scripted([() => jsonResponse(429, { error: { code: "rate_limited", message: "Daily limit of 300 requests reached." } }, { "Retry-After": "40000" })]), now });
     const err = await limited.countries().catch((e) => e);
     expect(err).toMatchObject({ kind: "limited", code: "rate_limited" });
     expect(err.message).toContain(KEYS_URL_APP);
+    // No X-RateLimit-Limit seen: general wording, no fixed number.
+    expect(err.message).toMatch(/^Add your free API key: the free daily allowance without a key is used up;/);
+    expect(err.message).not.toMatch(/without a key \(/);
     expect(await limited.needsKeyPrompt()).toBe(true);
     const fresh = new CalcBlocClient({ store: memoryStore(), fetch: scripted([() => ok({}, 30, 600)]), now });
     await fresh.countries();

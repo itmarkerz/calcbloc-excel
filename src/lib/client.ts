@@ -30,7 +30,7 @@ export interface ClientOptions {
   ttl?: Partial<CacheTtl>;
   /** Most cached responses kept on the device; the oldest are dropped first. */
   maxEntries?: number;
-  /** Requests allowed per rolling minute; defaults to the API limits (5 anonymous, 60 with a key). */
+  /** Requests allowed per rolling minute; defaults to 5 anonymous (a conservative pace, below the API's keyless per-minute limit) and 60 with a key. */
   perMinute?: { anonymous: number; keyed: number };
 }
 
@@ -57,7 +57,7 @@ const CACHE_PREFIX = "calcbloc.cache.v1:";
 const INDEX_KEY = "calcbloc.cache.v1.index";
 const QUOTA_KEY = "calcbloc.quota.v1";
 
-/** Requests per rolling minute the API allows (anonymous / with a key). */
+/** Requests sent per rolling minute (anonymous / with a key): 5 is a conservative keyless pace, below the API's keyless per-minute limit; 60 is the key's limit. */
 const PER_MINUTE = { anonymous: 5, keyed: 60 };
 
 function hoursUntil(ms: number): string {
@@ -247,11 +247,23 @@ export class CalcBlocClient {
     return { keyed, limit: null, remaining: null, resetAt: null, blockedUntil: null, updatedAt: this.now() };
   }
 
+  /**
+   * The rate-limit error. The keyless limits are not typed in here: the daily figure comes from the API's
+   * X-RateLimit-Limit header when a keyless response has carried one.
+   */
   private limitError(keyed: boolean, until: number): CalcBlocError {
-    const wait = hoursUntil(until - this.now());
-    const msg = keyed
-      ? `The request limit for this API key (5,000 a day, 60 a minute) is used up; it resets in ${wait}. Results already fetched keep working.`
-      : `Add your free API key: the free requests without a key (50 a day, 5 a minute, per internet address) are used up; they reset in ${wait}. Get a free key (5,000 a day) at ${KEYS_URL_APP} and paste it in the CalcBloc task pane (${KEY_SETTINGS_PATH}). Results already fetched keep working.`;
+    const left = until - this.now();
+    const wait = hoursUntil(left);
+    if (keyed) {
+      return new CalcBlocError("limited", "rate_limited", `The request limit for this API key (5,000 a day, 60 a minute) is used up; it resets in ${wait}. Results already fetched keep working.`);
+    }
+    const q = this.quota;
+    const limit = q && !q.keyed && q.limit !== null && Number.isInteger(q.limit) && q.limit > 0 ? q.limit : null;
+    const used =
+      left <= MINUTE
+        ? "the free per-minute allowance without a key is used up for this minute"
+        : `the free daily allowance without a key${limit !== null ? ` (${limit.toLocaleString("en-US")} requests a day)` : ""} is used up`;
+    const msg = `Add your free API key: ${used}; it resets in ${wait}. Get a free key (email only, 5,000 requests a day) at ${KEYS_URL_APP} and paste it in the CalcBloc task pane (${KEY_SETTINGS_PATH}). Results already fetched keep working.`;
     return new CalcBlocError("limited", "rate_limited", msg);
   }
 

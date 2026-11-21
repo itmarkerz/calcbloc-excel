@@ -116,13 +116,13 @@ Open it from **Home > CalcBloc > Tax tables**.
 
 ## Requests, limits and caching
 
-Without an API key the CalcBloc API allows **50 requests a day and 5 a minute per internet address**. A free key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss) raises that to 5,000 a day and 60 a minute. The add-in is built to stay well inside the anonymous limit:
+Without an API key the CalcBloc API allows **300 requests a day and 20 a minute per internet address** (see [calcbloc.com/developers#limits](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss#limits)). A free key from [calcbloc.com/developers/keys](https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss) raises that to 5,000 a day and 60 a minute. The add-in is built to stay well inside the anonymous limit:
 
 - every answer is kept in memory and on the device (`OfficeRuntime.storage`) for 7 days, so reopening or recalculating a workbook doesn't repeat requests;
 - identical requests made at the same time (a column of formulas) share one network call, and NET and TAX on the same inputs share one calculation;
 - RATE, the TAX bracket estimate and Insert tax table fetch a whole table once and answer every formula on it from that copy;
 - answers such as "unsupported country" are cached for a day, so a column of bad inputs costs one request;
-- requests are paced to the per-minute limit instead of failing (cells show `#BUSY!` while they wait);
+- requests are paced (at most 5 a minute without a key, 60 with one) instead of failing (cells show `#BUSY!` while they wait);
 - once the API reports that the daily limit is used up (`X-RateLimit-Remaining: 0` or a 429), no more calls are made until it resets. Without a key the cell's message starts with "Add your free API key" and gives the keys link and where to paste the key (Home > CalcBloc > Tax tables > Settings), and the task pane shows the same prompt; with a key it says the key's limit is used up.
 
 The key is sent in the `X-API-Key` header over HTTPS. **Clear cached data** in the task pane forces fresh answers.

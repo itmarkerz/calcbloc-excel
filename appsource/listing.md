@@ -43,7 +43,7 @@ Take-home pay, income tax and employer cost for the United States (all states), 
 
 **Light on requests**
 
-Works without signing up: up to 50 requests a day per internet address. Answers are cached on your device for a week and shared between formulas, so a typical workbook uses only a few. If you need more, the add-in asks you to add a free API key from calcbloc.com (5,000 requests a day), pasted in the task pane's Settings.
+Works without signing up: up to 300 requests a day and 20 a minute per internet address (see calcbloc.com/developers#limits). Answers are cached on your device for a week and shared between formulas, so a typical workbook uses only a few. If you need more, the add-in asks you to add a free API key from calcbloc.com (5,000 requests a day), pasted in the task pane's Settings.
 
 **Private by design**
 
@@ -85,6 +85,6 @@ Review captures from the local harness (not for the store): see the paths in the
 
 ## Test notes for Microsoft's validation team
 
-- No sign-in, account or API key is needed: the add-in works without a key (50 requests a day per IP address). If the testing network shares one address and uses that up, the cell message and the task pane show an "Add your free API key" prompt. For heavy testing use a free key (we can provide a reviewer key in these notes), created at https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss and pasted into Home > CalcBloc > Tax tables > Settings.
+- No sign-in, account or API key is needed: the add-in works without a key (300 requests a day and 20 a minute per internet address, see calcbloc.com/developers#limits). If the testing network shares one address and uses that up, the cell message and the task pane show an "Add your free API key" prompt. For heavy testing use a free key (we can provide a reviewer key in these notes), created at https://calcbloc.com/developers/keys?utm_source=calcbloc-excel&utm_medium=listing&utm_campaign=itmarkerz-oss and pasted into Home > CalcBloc > Tax tables > Settings.
 - Try: `=CALCBLOC.NET("uk", 50000)`, `=CALCBLOC.TAX("poland", 120000)`, `=CALCBLOC.RATE("ireland", "usc", 4)`, `=CALCBLOC.EMPLOYER_COST("us", 90000, "ny")`, then Home > CalcBloc > Tax tables > Insert tax table.
 - Expected errors are explained in the cell tooltip, e.g. `=CALCBLOC.NET("poland", 50000)` returns #N/A because Poland has tax tables only.
