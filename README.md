@@ -123,8 +123,8 @@ Duties and taxes on one import into the UK, an EU member state, the United State
 
 The add-in reads the list of countries, regions, years and parameters from the API (`GET /api/v1/countries`) at run time, so new countries appear without an update. At the time of writing (November 2026):
 
-- **NET, TAX and EMPLOYER_COST**: United States (by state), United Kingdom (England, Scotland, Wales), Canada (by province), Australia, New Zealand, Ireland, India, Germany, Spain, Netherlands, Singapore; France for NET and TAX.
-- **Tax tables only** (RATE, TAX bracket estimate, Insert tax table): Austria, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, Greece, Hungary, Iceland, Italy, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Norway, Poland, Portugal, Romania, Serbia, Slovakia, Slovenia, Sweden, Switzerland, Türkiye, Ukraine, United Arab Emirates.
+- **NET, TAX and EMPLOYER_COST**: United States (by state), United Kingdom (England, Scotland, Wales), Canada (by province), Australia, New Zealand, Ireland, India, Germany, Spain, Netherlands, Singapore, and since CalcBloc API 1.10 Denmark (`"dk"`), Estonia (`"ee"`) and Poland (`"pl"`) with the calculator's default options (Denmark: national average municipal tax, no church tax; Estonia: II pillar 2%; Poland: employment contract, 1.67% accident insurance rate); France for NET and TAX.
+- **Tax tables only** (RATE, TAX bracket estimate, Insert tax table): the other 202 of the API's 217 countries and territories, from Albania to Zimbabwe, by short code, ISO code or English name.
 
 The current list with every parameter is on [calcbloc.com/developers](https://calcbloc.com/developers?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss#parameters); tax tables for each country are linked from [calcbloc.com/data](https://calcbloc.com/data?utm_source=calcbloc-excel&utm_medium=readme&utm_campaign=itmarkerz-oss).
 

@@ -149,6 +149,11 @@ export interface CalcResponse {
   results: Record<string, number>;
   breakdown: { title: string; columns: string[]; rows: { label: string; values: number[] }[] } | null;
   notes: string[];
+  /**
+   * API 1.10+: "official-example" (checked against an official worked example), "law-text" (worked by hand from the
+   * law) or null (countries with their own engine).
+   */
+  verification?: "official-example" | "law-text" | null;
   calculatorUrl: string;
   warnings: string[];
   attribution?: Attribution;
