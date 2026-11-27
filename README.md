@@ -97,6 +97,28 @@ Estimated total annual cost of employing someone: salary plus employer social se
 | `=CALCBLOC.EMPLOYER_COST("us", 90000, "ny")` | New York (state unemployment tax) |
 | `=CALCBLOC.EMPLOYER_COST("australia", 95000, "nsw")` | NSW payroll tax rules |
 
+### CALCBLOC.BONUS_WITHHOLDING
+
+`=CALCBLOC.BONUS_WITHHOLDING(country, salary, amount, [type], [region], [result])`
+
+Tax withheld on a bonus, commission, RSU vest, option exercise or lump sum paid on top of a regular salary, using the country's official withholding method (CalcBloc API 1.8, `/supplemental-withholding`; 12 countries). `result` picks another figure: `totalLiability` (the final tax the payment adds at the person's real rates), `difference` or `netPayment`.
+
+| Example | Meaning |
+| --- | --- |
+| `=CALCBLOC.BONUS_WITHHOLDING("us", 150000, 20000, , "ca")` | Withheld on a $20,000 bonus in California |
+| `=CALCBLOC.BONUS_WITHHOLDING("us", 150000, 20000, , "ca", "totalLiability")` | The final tax the bonus adds |
+
+### CALCBLOC.IMPORT_DUTY
+
+`=CALCBLOC.IMPORT_DUTY(destination, origin, code, customsValue, [result], [proofOfOrigin])`
+
+Duties and taxes on one import into the UK, an EU member state, the United States or India, from the official tariffs (CalcBloc API 1.9, `/import-duty`). `result` picks `customs_duty`, `extra_duties`, `excise`, `import_vat` or `landed_cost` instead of the total. When the API marks the total incomplete (for example an excise code is needed), the cell shows an error with the reason instead of a number that would understate the cost. An estimate, not a customs ruling.
+
+| Example | Meaning |
+| --- | --- |
+| `=CALCBLOC.IMPORT_DUTY("gb", "in", "0901210000", 1000, , TRUE)` | Coffee from India into the UK with proof of origin |
+| `=CALCBLOC.IMPORT_DUTY("de", "cn", "7318154210", 5000, "landed_cost")` | Landed cost of screws from China into Germany |
+
 ## Countries
 
 The add-in reads the list of countries, regions, years and parameters from the API (`GET /api/v1/countries`) at run time, so new countries appear without an update. At the time of writing (November 2026):

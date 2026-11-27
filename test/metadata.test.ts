@@ -16,13 +16,15 @@ describe("custom function metadata (functions.json)", async () => {
     expect(res.errors).toEqual([]);
   });
 
-  it("defines NET, TAX, RATE and EMPLOYER_COST with the documented signatures", () => {
+  it("defines NET, TAX, RATE, EMPLOYER_COST, BONUS_WITHHOLDING and IMPORT_DUTY with the documented signatures", () => {
     const sig = Object.fromEntries(meta.functions.map((f) => [f.id, f.parameters.map((p) => (p.optional ? `[${p.name}]` : p.name)).join(", ")]));
     expect(sig).toEqual({
       NET: "country, gross, [region], [year]",
       TAX: "country, gross, [region], [year], [section]",
       RATE: "country, section, label, [year], [region]",
       EMPLOYER_COST: "country, gross, [region], [year]",
+      BONUS_WITHHOLDING: "country, salary, amount, [type], [region], [result]",
+      IMPORT_DUTY: "destination, origin, code, customsValue, [result], [proofOfOrigin]",
     });
   });
 

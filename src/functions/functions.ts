@@ -80,3 +80,35 @@ async function rate(country: string, section: string, label: any, year?: any, re
 async function employerCost(country: string, gross: number, region?: string, year?: any): Promise<number> {
   return wrap(() => core.employerCost(getDeps(), country, gross, region, year));
 }
+
+/**
+ * Tax withheld on a bonus, commission, RSU vest, option exercise or lump sum paid on top of a salary, with the country's official withholding method.
+ * @customfunction BONUS_WITHHOLDING
+ * @helpurl https://github.com/itmarkerz/calcbloc-excel#calcblocbonus_withholding
+ * @param country Country code or name, e.g. "us", "uk", "ca". Empty uses the default country.
+ * @param salary Regular gross annual salary in the country's currency.
+ * @param amount The bonus or other payment (gross).
+ * @param [type] "bonus" (default), "commission", "rsu_vest", "option_exercise" or "lump_sum".
+ * @param [region] State or province where needed (US, Canada), e.g. "ca" or "on".
+ * @param [result] "totalWithheld" (default), "totalLiability", "difference" or "netPayment".
+ * @returns The tax withheld on the payment.
+ */
+async function bonusWithholding(country: string, salary: number, amount: number, type?: string, region?: string, result?: string): Promise<number> {
+  return wrap(() => core.bonusWithholding(getDeps(), country, salary, amount, type, region, result));
+}
+
+/**
+ * Duties and taxes on one import into the UK, an EU member state, the US or India, from the official tariff. An estimate, not a customs ruling; an incomplete total is an error.
+ * @customfunction IMPORT_DUTY
+ * @helpurl https://github.com/itmarkerz/calcbloc-excel#calcblocimport_duty
+ * @param destination Importing country, e.g. "gb", "de", "us" or "in".
+ * @param origin Country of origin, e.g. "cn" or "in".
+ * @param code Commodity code, 10 digits (8 for India), e.g. "0901210000".
+ * @param customsValue Customs value in the tariff's currency.
+ * @param [result] "duties_and_taxes" (default), "customs_duty", "extra_duties", "excise", "import_vat" or "landed_cost".
+ * @param [proofOfOrigin] TRUE when the goods have a valid proof of origin for a preference.
+ * @returns The amount in the tariff's currency.
+ */
+async function importDuty(destination: string, origin: string, code: string, customsValue: number, result?: string, proofOfOrigin?: boolean): Promise<number> {
+  return wrap(() => core.importDuty(getDeps(), destination, origin, code, customsValue, result, proofOfOrigin));
+}

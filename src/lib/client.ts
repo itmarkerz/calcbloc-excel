@@ -122,6 +122,15 @@ export class CalcBlocClient {
     return this.get<CalcResponse>(`/${endpoint}?${qs}`, this.ttl.calc);
   }
 
+  /** GET an API 1.8 / 1.9 endpoint (/supplemental-withholding, /import-duty) with the given parameters, cached like calc(). */
+  endpoint<T>(endpoint: "supplemental-withholding" | "import-duty", params: Record<string, string | number | boolean>): Promise<T> {
+    const qs = Object.keys(params)
+      .sort()
+      .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(String(params[k]))}`)
+      .join("&");
+    return this.get<T>(`/${endpoint}?${qs}`, this.ttl.calc);
+  }
+
   /**
    * True when requests without a key have hit the API's limit (daily allowance used up, or a 429): the task pane then
    * asks for a free API key. False once a key is in use.
